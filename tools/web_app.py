@@ -53,6 +53,9 @@ TEMPLATES_DIR = WORKSPACE / "tools" / "templates"
 STATIC_DIR = WORKSPACE / "tools" / "static"
 CACHE_DIR = WORKSPACE / "tools" / "cache"
 
+# TTL кэша: 24 часа (для мета-поиска автозапчастей цены меняются ежедневно)
+CACHE_TTL_SECONDS = 24 * 3600
+
 # Хранилище статусов поиска в памяти (in-memory).
 # В проде — Redis, но для MVP достаточно.
 SEARCHES: dict[str, dict[str, Any]] = {}
@@ -67,19 +70,48 @@ def cache_path(sku: str) -> Path:
 
 
 def load_cache(sku: str) -> dict[str, Any] | None:
+    """Загрузить кэш с проверкой TTL."""
     p = cache_path(sku)
     if not p.exists():
         return None
     try:
-        return json.loads(p.read_text(encoding="utf-8"))
+        data = json.loads(p.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError):
         return None
+    # Проверяем возраст
+    cached_at = data.get("cached_at")
+    if cached_at:
+        try:
+            ts = datetime.fromisoformat(cached_at.replace("Z", "+00:00"))
+            age = (datetime.now(timezone.utc) - ts).total_seconds()
+            if age > CACHE_TTL_SECONDS:
+                return None  # устарело
+        except (ValueError, TypeError):
+            return None
+    return data
 
 
 def save_cache(sku: str, data: dict[str, Any]) -> None:
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
     cache_path(sku).write_text(json.dumps(data, ensure_ascii=False, indent=2),
                               encoding="utf-8")
+
+
+def cache_age(cached_at: str) -> str:
+    """Человекочитаемая давность кэша."""
+    try:
+        ts = datetime.fromisoformat(cached_at.replace("Z", "+00:00"))
+        delta = datetime.now(timezone.utc) - ts
+        seconds = int(delta.total_seconds())
+        if seconds < 60:
+            return f"{seconds} сек назад"
+        if seconds < 3600:
+            return f"{seconds // 60} мин назад"
+        if seconds < 86400:
+            return f"{seconds // 3600} ч назад"
+        return f"{seconds // 86400} дн назад"
+    except (ValueError, TypeError):
+        return "неизвестно"
 
 
 def add_to_history(sku: str, sources: list[str], records_count: int) -> None:

@@ -103,7 +103,7 @@ form.addEventListener('submit', async (e) => {
     if (from_cache) {
       const cached = await fetch(`/api/search/${search_id}`).then(r => r.json());
       progress.classList.add('hidden');
-      renderResults(cached);
+      renderResults(cached, true);
       return;
     }
 
@@ -195,10 +195,15 @@ async function loadHistory() {
 document.getElementById('history-refresh').addEventListener('click', loadHistory);
 loadHistory();
 
-function renderResults(data) {
+function renderResults(data, fromCache=false) {
   if (!data.result || !data.result.cards || data.result.cards.length === 0) {
     showError('Ничего не найдено по этому SKU.');
     return;
+  }
+  if (fromCache) {
+    results.insertAdjacentHTML('beforeend',
+      '<div class="bg-amber-50 border border-amber-200 rounded-lg px-4 py-2 text-sm text-amber-800">⚡ Из кэша (TTL 24 ч)</div>'
+    );
   }
   data.result.cards.forEach(card => {
     results.insertAdjacentHTML('beforeend', renderCard(card));
