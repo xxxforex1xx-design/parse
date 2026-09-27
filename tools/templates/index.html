@@ -23,11 +23,13 @@
   </header>
 
   <form id="search-form" class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-6">
-    <label class="block text-sm font-medium text-slate-700 mb-2">Артикул (SKU)</label>
+    <label class="block text-sm font-medium text-slate-700 mb-2">
+      Артикул, VIN или название детали
+    </label>
     <div class="flex gap-3">
       <input
         id="q" name="q" type="text" required
-        placeholder="например, 6RU698151 или 0446533450"
+        placeholder="например, 6RU698151 · WBA3A5C57CF256789 · тормозные колодки"
         class="flex-1 px-4 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         autocomplete="off" />
       <button type="submit"
@@ -35,7 +37,10 @@
         Искать
       </button>
     </div>
-    <p class="text-xs text-slate-500 mt-2">Поддерживается только поиск по SKU. VIN и название — в следующей версии.</p>
+    <p class="text-xs text-slate-500 mt-2">
+      SKU → все источники (Exist + Autodoc + Rossko) ·
+      VIN/название → только Rossko (текстовый поиск).
+    </p>
   </form>
 
   <!-- История -->
@@ -77,6 +82,12 @@ const errorBox = document.getElementById('error');
 const errorMsg = document.getElementById('error-message');
 const results = document.getElementById('results');
 
+const SOURCE_LABELS = {
+  exist: 'Exist',
+  autodoc: 'Autodoc',
+  rossko: 'Rossko'
+};
+
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   const q = document.getElementById('q').value.trim();
@@ -99,33 +110,46 @@ form.addEventListener('submit', async (e) => {
       const err = await resp.json();
       throw new Error(err.detail?.message || err.message || `HTTP ${resp.status}`);
     }
-    const {search_id, sku, from_cache} = await resp.json();
-    if (from_cache) {
-      const cached = await fetch(`/api/search/${search_id}`).then(r => r.json());
-      progress.classList.add('hidden');
-      renderResults(cached, true);
-      return;
-    }
+    const {search_id, query, q_type, sources, from_cache} = await resp.json();
 
-    // Инициализируем прогресс
-    ['exist', 'autodoc', 'rossko'].forEach(src => {
+    // Инициализируем прогресс только для тех источников, которые реально парсятся
+    progressSources.innerHTML = '';
+    sources.forEach(src => {
       progressSources.insertAdjacentHTML('beforeend',
         `<div class="flex items-center gap-3" data-src="${src}">
-          <span class="w-24 text-sm text-slate-700">${src}</span>
+          <span class="w-24 text-sm text-slate-700">${SOURCE_LABELS[src] || src}</span>
           <span class="text-slate-400 text-sm">⏳ в очереди</span>
         </div>`);
     });
 
-    // Поллим статус каждые 2 сек
+    // Баннер типа запроса
+    if (q_type !== 'sku') {
+      const banner = document.createElement('div');
+      const note = q_type === 'vin'
+        ? `🔍 Поиск по VIN: <span class="font-mono">${query}</span> — данные только с Rossko (текстовый поиск)`
+        : `🔍 Поиск по названию: «${query}» — данные только с Rossko (текстовый поиск)`;
+      banner.className = 'bg-indigo-50 border border-indigo-200 rounded-lg px-4 py-2 text-sm text-indigo-800 mb-3';
+      banner.innerHTML = note;
+      progress.insertAdjacentElement('afterend', banner);
+    }
+
+    if (from_cache) {
+      const cached = await fetch(`/api/search/${search_id}`).then(r => r.json());
+      progress.classList.add('hidden');
+      renderResults(cached, true, q_type, query);
+      return;
+    }
+
+    // Поллим статус каждые 1.5 сек
     const poll = setInterval(async () => {
       try {
         const r = await fetch(`/api/search/${search_id}`);
         const data = await r.json();
-        updateProgress(data);
+        updateProgress(data, sources);
         if (data.status === 'done') {
           clearInterval(poll);
           progress.classList.add('hidden');
-          renderResults(data);
+          renderResults(data, false, q_type, query);
           loadHistory();
         } else if (data.status === 'error') {
           clearInterval(poll);
@@ -145,16 +169,17 @@ form.addEventListener('submit', async (e) => {
   }
 });
 
-function updateProgress(data) {
-  const progress = data.progress || {};
-  ['exist', 'autodoc', 'rossko'].forEach(src => {
+function updateProgress(data, sources) {
+  const prog = data.progress || {};
+  sources.forEach(src => {
     const el = progressSources.querySelector(`[data-src="${src}"]`);
     if (!el) return;
-    const status = progress[src] || 'pending';
+    const status = prog[src] || 'pending';
     const labels = {
       'queued': '⏳ в очереди',
       'running': '🔄 парсим...',
       'done': '✓ готово',
+      'cached': '⚡ из кэша',
       'pending': '⏳ ожидание'
     };
     el.querySelector('span:last-child').textContent = labels[status] || status;
@@ -182,9 +207,15 @@ async function loadHistory() {
       const t = new Date(h.ts).toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'});
       const btn = document.createElement('button');
       btn.className = 'px-3 py-1 bg-slate-100 hover:bg-slate-200 rounded text-sm';
-      btn.innerHTML = `<span class="font-mono">${h.sku}</span> <span class="text-xs text-slate-500">${h.records_count} офферов · ${t}</span>`;
+      // Разный стиль для разных типов запросов
+      const queryLabel = h.q_type === 'sku'
+        ? `<span class="font-mono">${escapeHtml(h.query)}</span>`
+        : h.q_type === 'vin'
+        ? `<span class="font-mono">${escapeHtml(h.query)}</span> <span class="text-xs text-indigo-600">[VIN]</span>`
+        : `«${escapeHtml(h.query)}» <span class="text-xs text-indigo-600">[${h.sources.join('+')}]</span>`;
+      btn.innerHTML = `${queryLabel} <span class="text-xs text-slate-500">${h.records_count} · ${t}</span>`;
       btn.onclick = () => {
-        document.getElementById('q').value = h.sku;
+        document.getElementById('q').value = h.query;
         document.getElementById('search-form').dispatchEvent(new Event('submit', {cancelable: true}));
       };
       list.appendChild(btn);
@@ -195,18 +226,25 @@ async function loadHistory() {
 document.getElementById('history-refresh').addEventListener('click', loadHistory);
 loadHistory();
 
-function renderResults(data, fromCache=false) {
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
+function renderResults(data, fromCache=false, qType=null, query=null) {
   if (!data.result || !data.result.cards || data.result.cards.length === 0) {
-    showError('Ничего не найдено по этому SKU.');
+    const what = qType === 'vin' ? 'VIN' : qType === 'name' ? 'названию' : 'артикулу';
+    showError(`Ничего не найдено по этому ${what}.`);
     return;
   }
   if (fromCache) {
     results.insertAdjacentHTML('beforeend',
-      '<div class="bg-amber-50 border border-amber-200 rounded-lg px-4 py-2 text-sm text-amber-800">⚡ Из кэша (TTL 24 ч)</div>'
+      '<div class="bg-amber-50 border border-amber-200 rounded-lg px-4 py-2 text-sm text-amber-800 mb-3">⚡ Из кэша (TTL 24 ч)</div>'
     );
   }
   data.result.cards.forEach(card => {
-    results.insertAdjacentHTML('beforeend', renderCard(card));
+    results.insertAdjacentHTML('beforeend', renderCard(card, qType, query));
   });
   results.classList.remove('hidden');
 }
@@ -215,22 +253,31 @@ function fmtPrice(p) {
   return p != null ? `${Math.round(p)} ₽` : '—';
 }
 
-function renderCard(card) {
+function renderLink(url, label) {
+  if (!url) return '';
+  // Защита от XSS: href оставляем как есть (валидация на сервере), текст — экранируем.
+  return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer"
+             class="text-xs text-blue-600 hover:underline ml-1">${escapeHtml(label)}</a>`;
+}
+
+function renderCard(card, qType=null, query=null) {
   const bp = card.best_price;
   const bo = card.best_original;
+  const bi = card.best_in_stock;
 
-  // Фильтр по брендам (UI-state)
   const stateId = `card-${card.sku}`;
-  const allBrands = card.brands.map(b => b.brand);
+  const cardTitle = qType && qType !== 'sku'
+    ? `${card.sku} <span class="text-sm font-normal text-slate-500">(запрос: ${qType === 'vin' ? 'VIN ' : '«'}${escapeHtml(query || '')}${qType === 'vin' ? '' : '»'})</span>`
+    : card.sku;
 
   let head = `
     <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6" id="${stateId}">
       <div class="flex items-baseline justify-between mb-4">
-        <div class="flex items-baseline gap-3">
-          <h2 class="text-2xl font-bold text-slate-900">${card.sku}</h2>
-          <span class="text-sm text-slate-500">${card.sources.join(', ')}</span>
+        <div class="flex items-baseline gap-3 flex-wrap">
+          <h2 class="text-2xl font-bold text-slate-900">${cardTitle}</h2>
+          <span class="text-sm text-slate-500">${card.sources.map(s => SOURCE_LABELS[s] || s).join(', ')}</span>
         </div>
-        <a href="/api/export/${card.sku}.csv" download="${card.sku}.csv"
+        <a href="/api/export/${encodeURIComponent(card.sku)}.csv" download="${escapeHtml(card.sku)}.csv"
            class="text-sm text-blue-600 hover:underline">⬇ Скачать CSV</a>
       </div>
 
@@ -238,23 +285,32 @@ function renderCard(card) {
         <div class="bg-blue-50 rounded-lg p-4">
           <div class="text-xs uppercase text-blue-600 font-semibold mb-1">Лучшая цена</div>
           <div class="text-2xl font-bold text-blue-900">${fmtPrice(bp.price)}</div>
-          <div class="text-sm text-blue-700 mt-1">${bp.brand} · ${bp.source}</div>
+          <div class="text-sm text-blue-700 mt-1">
+            ${escapeHtml(bp.brand || '—')} · ${SOURCE_LABELS[bp.source] || bp.source}
+            ${renderLink(bp.url, '↗ открыть')}
+          </div>
         </div>
         <div class="bg-emerald-50 rounded-lg p-4">
           <div class="text-xs uppercase text-emerald-600 font-semibold mb-1">Лучший ОРИГИНАЛ</div>
           <div class="text-2xl font-bold text-emerald-900">${fmtPrice(bo?.price)}</div>
-          <div class="text-sm text-emerald-700 mt-1">${bo ? `${bo.brand} · ${bo.source}` : '—'}</div>
+          <div class="text-sm text-emerald-700 mt-1">
+            ${bo ? `${escapeHtml(bo.brand || '—')} · ${SOURCE_LABELS[bo.source] || bo.source}` : '—'}
+            ${bo ? renderLink(bo.url, '↗ открыть') : ''}
+          </div>
         </div>
         <div class="bg-slate-50 rounded-lg p-4">
-          <div class="text-xs uppercase text-slate-600 font-semibold mb-1">Диапазон</div>
-          <div class="text-2xl font-bold text-slate-900">${fmtPrice(card.min_price)} – ${fmtPrice(card.max_price)}</div>
-          <div class="text-sm text-slate-700 mt-1">${card.offers_count} офферов · ${card.brands_count} брендов</div>
+          <div class="text-xs uppercase text-slate-600 font-semibold mb-1">В наличии</div>
+          <div class="text-2xl font-bold text-slate-900">${fmtPrice(bi?.price)}</div>
+          <div class="text-sm text-slate-700 mt-1">
+            ${bi ? `${escapeHtml(bi.brand || '—')} · ${SOURCE_LABELS[bi.source] || bi.source}` : '—'}
+            ${bi ? renderLink(bi.url, '↗ открыть') : ''}
+          </div>
         </div>
       </div>
 
-      <div class="flex items-center justify-between mb-2 gap-3">
+      <div class="flex items-center justify-between mb-2 gap-3 flex-wrap">
         <h3 class="text-sm font-semibold text-slate-700 uppercase">Все бренды</h3>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 flex-wrap">
           <label class="text-xs text-slate-500">Сортировка:</label>
           <select class="sort-select text-xs border border-slate-300 rounded px-2 py-1"
                   data-card="${stateId}">
@@ -278,7 +334,8 @@ function renderCard(card) {
               <th class="text-left py-2 pr-4">Бренд</th>
               <th class="text-left py-2 pr-4">Источник</th>
               <th class="text-center py-2 pr-4">Оригинал</th>
-              <th class="text-right py-2">Офферов</th>
+              <th class="text-right py-2 pr-4">Офферов</th>
+              <th class="text-right py-2">Ссылка</th>
             </tr>
           </thead>
           <tbody>
@@ -286,14 +343,15 @@ function renderCard(card) {
 
   card.brands.forEach(b => {
     head += `
-      <tr class="brand-row border-b border-slate-100" data-brand="${b.brand.toLowerCase()}"
-          data-min-price="${b.min_price}" data-name="${b.brand.toLowerCase()}"
+      <tr class="brand-row border-b border-slate-100" data-brand="${escapeHtml(b.brand.toLowerCase())}"
+          data-min-price="${b.min_price}" data-name="${escapeHtml(b.brand.toLowerCase())}"
           data-offers="${b.offers_count}">
         <td class="py-2 pr-4 font-mono text-slate-900">${fmtPrice(b.min_price)}${b.max_price > b.min_price ? ' – ' + fmtPrice(b.max_price) : ''}</td>
-        <td class="py-2 pr-4 text-slate-800">${b.brand}</td>
-        <td class="py-2 pr-4 text-slate-600 text-xs">${b.sources.join(', ')}</td>
+        <td class="py-2 pr-4 text-slate-800">${escapeHtml(b.brand)}</td>
+        <td class="py-2 pr-4 text-slate-600 text-xs">${b.sources.map(s => SOURCE_LABELS[s] || s).join(', ')}</td>
         <td class="py-2 pr-4 text-center">${b.is_original ? '<span class="inline-block badge-orig text-xs px-2 py-0.5 rounded">ОРИГ</span>' : ''}</td>
-        <td class="py-2 text-right text-slate-600">${b.offers_count}</td>
+        <td class="py-2 pr-4 text-right text-slate-600">${b.offers_count}</td>
+        <td class="py-2 text-right">${b.offer_url ? `<a href="${escapeHtml(b.offer_url)}" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-600 hover:underline">↗</a>` : '—'}</td>
       </tr>
     `;
   });

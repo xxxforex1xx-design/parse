@@ -152,3 +152,48 @@ def test_brand_alias_vag_asia_normalizes_to_vag():
     assert vag["min_price"] == 1000
     assert vag["max_price"] == 1200
     assert set(vag["sources"]) == {"exist", "rossko"}
+
+
+def test_offer_url_in_best_and_brand():
+    """URL самого дешёвого оффера должен быть в best_* и в brand.offer_url."""
+    records = [
+        {"source": "exist", "sku": "X", "brand": "VAG", "price_value": 1500,
+         "is_best_offer": True, "flags": "ОРИГИНАЛ",
+         "url": "https://exist.ru/Parts/X-1500"},
+        {"source": "rossko", "sku": "X", "brand": "VAG", "price_value": 1200,
+         "is_available": True, "flags": "ОРИГИНАЛ",
+         "url": "https://rossko.ru/search?code=X-1200"},
+        {"source": "rossko", "sku": "X", "brand": "AMD", "price_value": 900,
+         "is_available": True, "flags": "",
+         "url": "https://rossko.ru/search?code=X-AMD"},
+    ]
+    result = aggregate(records)
+    card = result["cards"][0]
+
+    # best_price = AMD 900 ₽ с Rossko
+    assert card["best_price"]["price"] == 900
+    assert card["best_price"]["url"] == "https://rossko.ru/search?code=X-AMD"
+
+    # best_original = VAG 1200 ₽ с Rossko (дешевле, чем Exist 1500)
+    assert card["best_original"]["price"] == 1200
+    assert card["best_original"]["url"] == "https://rossko.ru/search?code=X-1200"
+
+    # best_in_stock = AMD 900
+    assert card["best_in_stock"]["price"] == 900
+
+    # offer_url в brands → URL самого дешёвого оффера каждого бренда
+    brands_by_name = {b["brand"]: b for b in card["brands"]}
+    assert brands_by_name["VAG"]["offer_url"] == "https://rossko.ru/search?code=X-1200"
+    assert brands_by_name["AMD"]["offer_url"] == "https://rossko.ru/search?code=X-AMD"
+
+
+def test_offer_url_none_when_missing():
+    """Если у офферов нет url — offer_url остаётся None."""
+    records = [
+        {"source": "rossko", "sku": "X", "brand": "VAG", "price_value": 1200,
+         "is_available": True, "flags": ""},  # без url
+    ]
+    result = aggregate(records)
+    card = result["cards"][0]
+    assert card["best_price"]["url"] is None
+    assert card["brands"][0]["offer_url"] is None

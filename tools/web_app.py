@@ -47,6 +47,9 @@ from rate_limited_parser import (  # noqa: E402
     parse_exist, parse_autodoc, parse_rossko, UA,
 )
 from aggregator import aggregate, normalize_sku  # noqa: E402
+from query_utils import (  # noqa: E402
+    normalize_query, cache_key_for_query, sources_for_query_type,
+)
 
 TEMPLATES_DIR = WORKSPACE / "tools" / "templates"
 CACHE_DIR = WORKSPACE / "tools" / "cache"
@@ -112,9 +115,10 @@ def cache_age(cached_at: str) -> str:
         return "неизвестно"
 
 
-def add_to_history(sku: str, sources: list[str], records_count: int) -> None:
+def add_to_history(query: str, q_type: str, sources: list[str], records_count: int) -> None:
     HISTORY.insert(0, {
-        "sku": sku,
+        "query": query,
+        "q_type": q_type,
         "sources": sources,
         "records_count": records_count,
         "ts": datetime.now(timezone.utc).isoformat(),
@@ -123,28 +127,16 @@ def add_to_history(sku: str, sources: list[str], records_count: int) -> None:
         HISTORY.pop()
 
 
-def _normalize_query(q: str) -> tuple[str, str]:
-    """Нормализуем запрос. Возвращает (тип, нормализованный)."""
-    s = q.strip()
-    # SKU/артикул: только буквы/цифры, обычно 4-15 символов
-    cleaned = s.replace(" ", "").replace("-", "").replace("/", "").replace(".", "")
-    if cleaned and all(c.isalnum() for c in cleaned) and 4 <= len(cleaned) <= 20:
-        return ("sku", cleaned.upper())
-    if " " in s:
-        return ("name", s)
-    return ("unknown", s)
-
-
-def _run_search_sync(sku: str, sources: set[str],
+def _run_search_sync(query: str, sources: set[str],
                      min_delay: float, max_delay: float) -> list[dict[str, Any]]:
-    """Синхронный Playwright-парсинг 3 источников. Возвращает плоский список офферов."""
+    """Синхронный Playwright-парсинг выбранных источников. Возвращает плоский список офферов."""
     records: list[dict[str, Any]] = []
     now = datetime.now(timezone.utc).isoformat()
 
     parsers = {
-        "exist": lambda page: _parse_exist(page, sku, now, records),
-        "autodoc": lambda page: _parse_autodoc(page, sku, now, records),
-        "rossko": lambda page: _parse_rossko(page, sku, now, records),
+        "exist": lambda page: _parse_exist(page, query, now, records),
+        "autodoc": lambda page: _parse_autodoc(page, query, now, records),
+        "rossko": lambda page: _parse_rossko(page, query, now, records),
     }
 
     with sync_playwright() as pw:
@@ -165,7 +157,7 @@ def _run_search_sync(sku: str, sources: set[str],
 
         for i, src in enumerate(sources):
             if i > 0:
-                delay = min_delay + (max_delay - min_delay) * (0.5 + 0.5 * (hash(sku + src) % 100) / 100)
+                delay = min_delay + (max_delay - min_delay) * (0.5 + 0.5 * (hash(query + src) % 100) / 100)
                 time.sleep(delay)
             try:
                 parsers[src](page)
@@ -178,15 +170,15 @@ def _run_search_sync(sku: str, sources: set[str],
     return records
 
 
-def _parse_exist(page, sku: str, now: str, records: list) -> None:
-    parsed = parse_exist(page, sku)
+def _parse_exist(page, query: str, now: str, records: list) -> None:
+    parsed = parse_exist(page, query)
     for off in parsed.get("offers", []):
         for v in off.get("variants", []):
             if v.get("price_value") is None:
                 continue
             records.append({
                 "source": "exist",
-                "sku": sku,
+                "sku": query,
                 "brand": off.get("brand") or off.get("art"),
                 "name": off.get("descr"),
                 "price_value": v["price_value"],
@@ -198,13 +190,13 @@ def _parse_exist(page, sku: str, now: str, records: list) -> None:
             })
 
 
-def _parse_autodoc(page, sku: str, now: str, records: list) -> None:
-    parsed = parse_autodoc(page, sku)
+def _parse_autodoc(page, query: str, now: str, records: list) -> None:
+    parsed = parse_autodoc(page, query)
     c = parsed.get("card") or {}
     if c.get("price_value") is not None:
         records.append({
             "source": "autodoc",
-            "sku": sku,
+            "sku": query,
             "brand": c.get("brand"),
             "name": c.get("name"),
             "price_value": c["price_value"],
@@ -216,14 +208,14 @@ def _parse_autodoc(page, sku: str, now: str, records: list) -> None:
         })
 
 
-def _parse_rossko(page, sku: str, now: str, records: list) -> None:
-    parsed = parse_rossko(page, sku)
+def _parse_rossko(page, query: str, now: str, records: list) -> None:
+    parsed = parse_rossko(page, query)
     for off in parsed.get("offers", []):
         if off.get("price_value") is None:
             continue
         records.append({
             "source": "rossko",
-            "sku": sku,
+            "sku": query,
             "brand": off.get("brand"),
             "name": off.get("name"),
             "price_value": off["price_value"],
@@ -262,54 +254,84 @@ async def index(request: Request):
 
 @app.post("/api/search")
 async def start_search(req: SearchRequest):
-    """Запустить поиск в фоне, вернуть search_id для опроса статуса."""
-    q_type, sku = _normalize_query(req.q)
-    if q_type != "sku":
+    """Запустить поиск в фоне, вернуть search_id для опроса статуса.
+
+    Поддерживает три типа запросов:
+    - SKU (4-20 alnum)  → Exist + Autodoc + Rossko
+    - VIN (17 alnum)    → только Rossko
+    - NAME (текст)      → только Rossko
+    """
+    q_type, normalized = normalize_query(req.q)
+    if q_type == "empty":
         raise HTTPException(
             status_code=400,
             detail={
-                "error": "only_sku_supported",
-                "message": f"Пока поддерживается только поиск по артикулу (SKU). Получили: {q_type!r} — {req.q!r}",
-                "tip": "Введите артикул вида 6RU698151 или 0446533450"
+                "error": "empty_query",
+                "message": "Пустой запрос — введите артикул, VIN или название",
             },
         )
 
+    # Источники, которые реально поддерживают этот тип запроса.
+    # Если клиент прислал свой список — пересекаем с поддерживаемыми.
+    supported = sources_for_query_type(q_type)
+    sources = [s for s in req.sources if s in supported] or supported
+
+    cache_key = cache_key_for_query(q_type, normalized)
+
     # Сначала проверяем кэш
-    cached = load_cache(sku)
-    if cached and set(cached.get("_sources", [])) >= set(req.sources):
+    cached = load_cache(cache_key)
+    if cached and set(cached.get("_sources", [])) >= set(sources):
         search_id = str(uuid.uuid4())[:8]
         SEARCHES[search_id] = {
             "status": "done",
             "started_at": cached.get("cached_at"),
-            "sku": sku,
-            "sources": req.sources,
-            "progress": {src: "cached" for src in req.sources},
+            "query": normalized,
+            "q_type": q_type,
+            "cache_key": cache_key,
+            "sources": sources,
+            "progress": {src: "cached" for src in sources},
             "result": cached["result"],
             "records_count": cached.get("records_count", 0),
             "from_cache": True,
             "error": None,
         }
-        return {"search_id": search_id, "sku": sku, "from_cache": True}
+        return {
+            "search_id": search_id,
+            "query": normalized,
+            "q_type": q_type,
+            "sources": sources,
+            "from_cache": True,
+        }
 
     search_id = str(uuid.uuid4())[:8]
     SEARCHES[search_id] = {
         "status": "running",
         "started_at": datetime.now(timezone.utc).isoformat(),
-        "sku": sku,
-        "sources": req.sources,
+        "query": normalized,
+        "q_type": q_type,
+        "cache_key": cache_key,
+        "sources": sources,
         "progress": {},
         "result": None,
         "from_cache": False,
         "error": None,
     }
 
-    asyncio.create_task(_do_search(search_id, sku, req.sources, req.min_delay, req.max_delay))
-    return {"search_id": search_id, "sku": sku, "from_cache": False}
+    asyncio.create_task(_do_search(search_id, normalized, cache_key, q_type,
+                                    sources, req.min_delay, req.max_delay))
+    return {
+        "search_id": search_id,
+        "query": normalized,
+        "q_type": q_type,
+        "sources": sources,
+        "from_cache": False,
+    }
 
 
-async def _do_search(search_id: str, sku: str, sources: list[str],
+async def _do_search(search_id: str, normalized: str, cache_key: str,
+                      q_type: str, sources: list[str],
                       min_delay: float, max_delay: float) -> None:
-    """Фоновая задача: парсит 3 источника, обновляет прогресс."""
+    """Фоновая задача: парсит источники, обновляет прогресс."""
     loop = asyncio.get_event_loop()
     sources_set = set(sources)
     SEARCHES[search_id]["progress"] = {src: "queued" for src in sources_set}
@@ -324,7 +346,7 @@ async def _do_search(search_id: str, sku: str, sources: list[str],
             records = await loop.run_in_executor(
                 None,
                 _run_search_sync,
-                sku, sources_set, min_delay, max_delay,
+                normalized, sources_set, min_delay, max_delay,
             )
             last_err = None
             break
@@ -357,14 +379,15 @@ async def _do_search(search_id: str, sku: str, sources: list[str],
     SEARCHES[search_id]["result"] = result
     SEARCHES[search_id]["records_count"] = len(records)
 
-    save_cache(sku, {
-        "sku": sku,
+    save_cache(cache_key, {
+        "query": normalized,
+        "q_type": q_type,
         "_sources": list(sources_set),
         "records_count": len(records),
         "cached_at": datetime.now(timezone.utc).isoformat(),
         "result": result,
     })
-    add_to_history(sku, list(sources_set), len(records))
+    add_to_history(normalized, q_type, list(sources_set), len(records))
 
 
 @app.get("/api/search/{search_id}")
@@ -381,19 +404,25 @@ async def get_history():
     return {"history": HISTORY}
 
 
-@app.get("/api/cache/{sku}")
-async def get_cache(sku: str):
-    """Получить кэшированный результат для SKU."""
-    cached = load_cache(sku)
+@app.get("/api/cache/{cache_key:path}")
+async def get_cache(cache_key: str):
+    """Получить кэшированный результат по cache_key."""
+    cached = load_cache(cache_key)
     if not cached:
         raise HTTPException(404, "not cached")
     return cached
 
 
-@app.get("/api/export/{sku}.csv")
-async def export_csv(sku: str):
-    """Экспорт результата в CSV (из кэша или текущего search_id)."""
-    cached = load_cache(sku)
+@app.get("/api/export/{cache_key:path}.csv")
+async def export_csv(cache_key: str):
+    """Экспорт результата в CSV (из кэша)."""
+    if not cache_key.endswith(".csv"):
+        cache_key = cache_key + ".csv"
+    return _do_export(cache_key[:-4])
+
+
+def _do_export(cache_key: str):
+    cached = load_cache(cache_key)
     if not cached:
         raise HTTPException(404, "not cached")
 
@@ -409,21 +438,25 @@ async def export_csv(sku: str):
                 "sources": ",".join(brand.get("sources", [])),
                 "offers_count": brand["offers_count"],
                 "card_offers_count": card["offers_count"],
+                "offer_url": brand.get("offer_url") or "",
             })
 
     # Простой CSV (без csv-модуля, чтобы не тянуть лишнее)
-    lines = ["sku,brand,min_price,max_price,is_original,sources,offers_count,card_offers_count"]
+    lines = ["sku,brand,min_price,max_price,is_original,sources,offers_count,card_offers_count,offer_url"]
     for r in rows:
         lines.append(
             f'{r["sku"]},{r["brand"]},{r["min_price"]:.0f},{r["max_price"]:.0f},'
-            f'{r["is_original"]},{r["sources"]},{r["offers_count"]},{r["card_offers_count"]}'
+            f'{r["is_original"]},{r["sources"]},{r["offers_count"]},{r["card_offers_count"]},{r["offer_url"]}'
         )
 
     from fastapi.responses import PlainTextResponse
+    # Имя файла: для SKU — SKU.csv, для vin/name — query.csv (sanitized)
+    q = cached.get("query", cache_key)
+    safe_name = "".join(c if c.isalnum() or c in "-_" else "_" for c in q)[:60]
     return PlainTextResponse(
         content="\n".join(lines),
         media_type="text/csv; charset=utf-8",
-        headers={"Content-Disposition": f"attachment; filename={sku}.csv"},
+        headers={"Content-Disposition": f"attachment; filename={safe_name}.csv"},
     )
 
 

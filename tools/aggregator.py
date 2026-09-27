@@ -186,12 +186,16 @@ def aggregate(records: list[dict[str, Any]], sku: str | None = None) -> dict[str
                     "max_price": o["price"],
                     "is_original": o["is_original"],
                     "sources": set(),
+                    "offer_url": None,  # URL самого дешёвого оффера этого бренда
                 }
             s_ = brand_stats[b]
             s_["offers_count"] += 1
             s_["min_price"] = min(s_["min_price"], o["price"])
             s_["max_price"] = max(s_["max_price"], o["price"])
             s_["sources"].add(o["source"])
+            # Сохраняем URL самого дешёвого оффера (= ссылка "купить")
+            if o["price"] == s_["min_price"] and o.get("url"):
+                s_["offer_url"] = o["url"]
 
         brand_list = [
             {**v, "sources": sorted(v["sources"])} for v in brand_stats.values()

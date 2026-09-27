@@ -347,4 +347,46 @@ rate_limited_parser.py      ОБЩИЙ crawler: rate-limit + retry + JSONL
 
 ---
 
-*Обновлено: 2026-09-26. Exist + Autodoc + Rossko с TDD (26 тестов за 3.4 сек). Готов этичный crawler.*
+## v3.1 — Поиск по VIN/названию + ссылки на офферы (2026-09-27)
+
+### Что добавлено
+
+- **`tools/query_utils.py`** — новый модуль:
+  - `normalize_query()` → `(sku|vin|name|empty, normalized)`
+  - `cache_key_for_query()` → имя файла кэша (SKU: plain, vin/name: md5[:16])
+  - `sources_for_query_type()` → какие источники поддерживают тип запроса
+- **Backend `web_app.py` обновлён:**
+  - POST `/api/search` принимает VIN / SKU / название
+  - VIN/NAME → только Rossko (текстовый поиск через `?q=`)
+  - SKU → Exist + Autodoc + Rossko как раньше
+  - `/api/export/{cache_key}.csv` экспортирует с `offer_url` в каждой строке
+- **Aggregator:** brands теперь содержат `offer_url` — URL самого дешёвого оффера этого бренда
+- **UI `index.html` обновлён:**
+  - Placeholder: `6RU698151 · WBA3A5C57CF256789 · тормозные колодки`
+  - Карточка best_price / best_original / best_in_stock — ссылка `↗ открыть`
+  - Таблица брендов — новая колонка `Ссылка` с `↗`
+  - Баннер «Текстовый поиск — только Rossko» при vin/name запросах
+  - History чипы: разный стиль для SKU / VIN / NAME
+  - XSS-защита: `escapeHtml()` для всех пользовательских строк
+
+### Smoke-test
+
+- Rossko: «масляный фильтр» → 10 офферов за 10 сек (MECAFILTER 1105 ₽, LYNXauto 472 ₽, SUFIX 194 ₽)
+- pytest: **61/61 за 3.7 сек** (было 36, добавлено 25 тестов: 23 query_utils + 2 aggregator на ссылки)
+
+### Решения
+
+- VIN определяем как 17 alnum без букв I/O/Q (стандарт ISO 3779)
+- Для текстовых запросов `cache_key = vin_<md5[:16]>` или `name_<md5[:16]>`, чтобы не конфликтовать с SKU-файлами
+- `aggregate()` фильтрует по `r["sku"]` — для текстовых запросов sku=query, офферы агрегируются по этому ключу (нормально для MVP)
+
+### Backlog (после v3.1)
+
+- Dockerfile + Procfile Dokku — следующий шаг
+- Мобильный адаптив (Tailwind responsive)
+- CHANGELOG.md
+- README — примеры и скриншоты
+
+---
+
+*Обновлено: 2026-09-27. v3.1: VIN/название + ссылки на офферы. 61/61 pytest за 3.7 сек.*
