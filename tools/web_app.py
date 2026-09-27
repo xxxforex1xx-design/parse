@@ -36,7 +36,6 @@ sys.path.insert(0, str(WORKSPACE / "tools"))
 
 from fastapi import FastAPI, HTTPException  # noqa: E402
 from fastapi.responses import HTMLResponse, JSONResponse  # noqa: E402
-from fastapi.staticfiles import StaticFiles  # noqa: E402
 from fastapi.templating import Jinja2Templates  # noqa: E402
 from fastapi import Request  # noqa: E402
 from pydantic import BaseModel  # noqa: E402
@@ -50,7 +49,6 @@ from rate_limited_parser import (  # noqa: E402
 from aggregator import aggregate, normalize_sku  # noqa: E402
 
 TEMPLATES_DIR = WORKSPACE / "tools" / "templates"
-STATIC_DIR = WORKSPACE / "tools" / "static"
 CACHE_DIR = WORKSPACE / "tools" / "cache"
 
 # TTL кэша: 24 часа (для мета-поиска автозапчастей цены меняются ежедневно)
@@ -248,7 +246,6 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Auto Parts Meta-Search", lifespan=lifespan)
-app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
 class SearchRequest(BaseModel):
