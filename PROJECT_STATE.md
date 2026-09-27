@@ -11,11 +11,14 @@
 
 ## Текущая фаза
 
-**MVP — проверка технической реализуемости ✅.** 3 из 4 источников
-работают с TDD-фикстурами (Exist, Autodoc, Rossko). 26 тестов проходят за
-3.4 сек. Готов этичный crawler (`rate_limited_parser.py`) для Exist +
-Autodoc — Rossko нужно добавить. Emex — отложен в v1.1 (нужен IP whitelist
-или Piloterr/xmldatafeed).
+**MVP мета-поиска ✅.** 3 источника (Exist, Autodoc, Rossko) с TDD-фикстурами
+(26 тестов) + этичный crawler `rate_limited_parser.py` для всех трёх +
+`aggregator.py` для сводки в единую карточку (10 тестов). End-to-end
+прогон на 6RU698151 работает: 28 офферов, 21 бренд, best_price 326 ₽
+(aftermarket), best_original 894 ₽ (Rossko VAG). Все 36 тестов за 4 сек.
+
+Avito отклонён: aggressive anti-bot (Cloudflare+Qrator+hCaptcha), ToS
+запрещает, B2C-качество данных низкое. Emex — отложен в v1.1.
 
 ### ✅ Rossko.ru — канал РАБОТАЕТ (с TDD-фикстурой)
 

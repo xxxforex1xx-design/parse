@@ -1,0 +1,269 @@
+{
+  "cards_count": 1,
+  "cards": [
+    {
+      "sku": "6RU698151",
+      "offers_count": 28,
+      "sources": [
+        "autodoc",
+        "exist",
+        "rossko"
+      ],
+      "brands_count": 21,
+      "min_price": 326.0,
+      "max_price": 6726.0,
+      "best_price": {
+        "source": "exist",
+        "sku": "6RU698151",
+        "brand": "Segmatic",
+        "name": null,
+        "price": 326.0,
+        "price_text": "от 326 ₽",
+        "in_stock": true,
+        "variants": null,
+        "is_original": false,
+        "url": "https://www.exist.ru/Price/?pid=F41092C5",
+        "scraped_at": "2026-09-27T14:24:30.899573+00:00"
+      },
+      "best_in_stock": {
+        "source": "exist",
+        "sku": "6RU698151",
+        "brand": "Segmatic",
+        "name": null,
+        "price": 326.0,
+        "price_text": "от 326 ₽",
+        "in_stock": true,
+        "variants": null,
+        "is_original": false,
+        "url": "https://www.exist.ru/Price/?pid=F41092C5",
+        "scraped_at": "2026-09-27T14:24:30.899573+00:00"
+      },
+      "best_original": {
+        "source": "rossko",
+        "sku": "6RU698151",
+        "brand": "VAG",
+        "name": "Колодки тормозные дисковые, передние",
+        "price": 894.0,
+        "price_text": "от 894 ₽",
+        "in_stock": true,
+        "variants": null,
+        "is_original": true,
+        "url": "https://rossko.ru/single/search/?q=6RU698151",
+        "scraped_at": "2026-09-27T14:24:30.940089+00:00"
+      },
+      "brands": [
+        {
+          "brand": "Segmatic",
+          "offers_count": 4,
+          "min_price": 326.0,
+          "max_price": 881.0,
+          "is_original": false,
+          "sources": [
+            "exist"
+          ]
+        },
+        {
+          "brand": "Asin",
+          "offers_count": 2,
+          "min_price": 673.0,
+          "max_price": 957.0,
+          "is_original": false,
+          "sources": [
+            "exist"
+          ]
+        },
+        {
+          "brand": "ADR",
+          "offers_count": 1,
+          "min_price": 797.0,
+          "max_price": 797.0,
+          "is_original": false,
+          "sources": [
+            "exist"
+          ]
+        },
+        {
+          "brand": "QML",
+          "offers_count": 1,
+          "min_price": 803.0,
+          "max_price": 803.0,
+          "is_original": false,
+          "sources": [
+            "exist"
+          ]
+        },
+        {
+          "brand": "Partra",
+          "offers_count": 1,
+          "min_price": 829.0,
+          "max_price": 829.0,
+          "is_original": false,
+          "sources": [
+            "exist"
+          ]
+        },
+        {
+          "brand": "TSN",
+          "offers_count": 2,
+          "min_price": 842.0,
+          "max_price": 950.0,
+          "is_original": false,
+          "sources": [
+            "exist"
+          ]
+        },
+        {
+          "brand": "ASP",
+          "offers_count": 1,
+          "min_price": 870.0,
+          "max_price": 870.0,
+          "is_original": false,
+          "sources": [
+            "exist"
+          ]
+        },
+        {
+          "brand": "VAG",
+          "offers_count": 2,
+          "min_price": 894.0,
+          "max_price": 6726.0,
+          "is_original": true,
+          "sources": [
+            "autodoc",
+            "rossko"
+          ]
+        },
+        {
+          "brand": "Porsche",
+          "offers_count": 1,
+          "min_price": 894.0,
+          "max_price": 894.0,
+          "is_original": true,
+          "sources": [
+            "rossko"
+          ]
+        },
+        {
+          "brand": "Finwhale",
+          "offers_count": 1,
+          "min_price": 894.0,
+          "max_price": 894.0,
+          "is_original": false,
+          "sources": [
+            "rossko"
+          ]
+        },
+        {
+          "brand": "ANYU",
+          "offers_count": 1,
+          "min_price": 916.0,
+          "max_price": 916.0,
+          "is_original": false,
+          "sources": [
+            "exist"
+          ]
+        },
+        {
+          "brand": "LAVS",
+          "offers_count": 1,
+          "min_price": 917.0,
+          "max_price": 917.0,
+          "is_original": false,
+          "sources": [
+            "exist"
+          ]
+        },
+        {
+          "brand": "Arirang",
+          "offers_count": 1,
+          "min_price": 926.0,
+          "max_price": 926.0,
+          "is_original": false,
+          "sources": [
+            "exist"
+          ]
+        },
+        {
+          "brand": "Brave",
+          "offers_count": 2,
+          "min_price": 934.0,
+          "max_price": 993.0,
+          "is_original": false,
+          "sources": [
+            "exist"
+          ]
+        },
+        {
+          "brand": "Anchi",
+          "offers_count": 1,
+          "min_price": 956.0,
+          "max_price": 956.0,
+          "is_original": false,
+          "sources": [
+            "exist"
+          ]
+        },
+        {
+          "brand": "Woking",
+          "offers_count": 1,
+          "min_price": 957.0,
+          "max_price": 957.0,
+          "is_original": false,
+          "sources": [
+            "exist"
+          ]
+        },
+        {
+          "brand": "Sangsin",
+          "offers_count": 1,
+          "min_price": 989.0,
+          "max_price": 989.0,
+          "is_original": false,
+          "sources": [
+            "exist"
+          ]
+        },
+        {
+          "brand": "Riginal",
+          "offers_count": 1,
+          "min_price": 1953.0,
+          "max_price": 1953.0,
+          "is_original": false,
+          "sources": [
+            "rossko"
+          ]
+        },
+        {
+          "brand": "Dafmi",
+          "offers_count": 1,
+          "min_price": 1953.0,
+          "max_price": 1953.0,
+          "is_original": false,
+          "sources": [
+            "rossko"
+          ]
+        },
+        {
+          "brand": "Vika",
+          "offers_count": 1,
+          "min_price": 2217.0,
+          "max_price": 2217.0,
+          "is_original": false,
+          "sources": [
+            "rossko"
+          ]
+        },
+        {
+          "brand": "KoTL",
+          "offers_count": 1,
+          "min_price": 2217.0,
+          "max_price": 2217.0,
+          "is_original": false,
+          "sources": [
+            "rossko"
+          ]
+        }
+      ]
+    }
+  ]
+}

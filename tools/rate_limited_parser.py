@@ -115,6 +115,45 @@ AUTODOC_PARSE_JS = r"""
 }
 """
 
+ROSSKO_PARSE_JS = r"""
+() => {
+  const text = (el) => (el ? (el.innerText || '').trim() : null);
+  const cleanNum = (s) => {
+    if (!s) return null;
+    const m = s.replace(/[^\d.,]/g, '').replace(/\s/g, '').replace(',', '.');
+    const n = parseFloat(m);
+    return Number.isFinite(n) ? n : null;
+  };
+  const cleanVariants = (s) => {
+    if (!s) return null;
+    const m = s.match(/(\d+)\s*вариант/i);
+    if (m) return parseInt(m[1], 10);
+    const nums = (s.match(/\d+/g) || []).map(n => parseInt(n, 10));
+    return nums.length ? nums[nums.length - 1] : null;
+  };
+  const offers = [];
+  document.querySelectorAll('.goods-items .goods-item').forEach((card) => {
+    const fullText = text(card) || '';
+    const brand = text(card.querySelector('.brand'));
+    const name = text(card.querySelector('.name'));
+    const priceText = text(card.querySelector('.price'));
+    const priceValue = cleanNum(priceText);
+    const costText = text(card.querySelector('.cost')) || '';
+    const variantsCount = cleanVariants(costText);
+    const isAvailable = ('Нет в наличии' not in fullText) && (priceValue !== null);
+    const flagsText = Array.from(card.querySelectorAll('.badge, .promo-label'))
+      .map(b => text(b)).filter(Boolean).join(', ') || null;
+    offers.push({ brand, name, price_text: priceText, price_value: priceValue,
+      variants_count: variantsCount, is_available: isAvailable, flags: flagsText });
+  });
+  return {
+    title: document.title,
+    h1: (document.querySelector('h1') || {}).innerText,
+    offers,
+  };
+}
+"""
+
 
 # ── Парсеры ────────────────────────────────────────────────────────────
 
@@ -156,6 +195,33 @@ def parse_autodoc(page, sku: str) -> dict[str, Any]:
     return result
 
 
+def parse_rossko(page, sku: str) -> dict[str, Any]:
+    # Rossko: главная → поиск по q
+    page.goto("https://rossko.ru/", wait_until="domcontentloaded", timeout=30000)
+    page.wait_for_timeout(2500)
+    try:
+        page.wait_for_function(
+            "() => document.querySelectorAll('input').length > 1",
+            timeout=10000,
+        )
+    except PWTimeout:
+        pass
+    page.wait_for_timeout(1500)
+
+    page.locator("input[name='q']").first.fill(sku)
+    page.wait_for_timeout(500)
+    try:
+        with page.expect_navigation(wait_until="domcontentloaded", timeout=15000):
+            page.locator("input[name='q']").first.press("Enter")
+    except PWTimeout:
+        pass
+    page.wait_for_timeout(4000)
+
+    result = page.evaluate(ROSSKO_PARSE_JS)
+    result["url"] = page.url
+    return result
+
+
 # ── Rate-limit + retry ─────────────────────────────────────────────────
 
 def jitter_delay(min_s: float, max_s: float) -> float:
@@ -179,7 +245,7 @@ def with_retry(fn, *, attempts: int = 3, base: float = 5.0):
 
 def main() -> int:
     p = argparse.ArgumentParser()
-    p.add_argument("--source", choices=["exist", "autodoc"], required=True)
+    p.add_argument("--source", choices=["exist", "autodoc", "rossko"], required=True)
     p.add_argument("--sku", help="Один SKU для парсинга")
     p.add_argument("--skus-file", type=Path, help="Файл со списком SKU (по одному на строку)")
     p.add_argument("--out", type=Path, help="JSONL-файл для результатов")
@@ -277,6 +343,25 @@ def main() -> int:
                         "url": parsed.get("url"),
                         "scraped_at": datetime.now(timezone.utc).isoformat(),
                     })
+                elif args.source == "rossko":
+                    parsed = with_retry(
+                        lambda: parse_rossko(page, sku),
+                        attempts=args.retries,
+                    )
+                    for off in parsed.get("offers", []):
+                        results.append({
+                            "source": "rossko",
+                            "sku": sku,
+                            "brand": off.get("brand"),
+                            "name": off.get("name"),
+                            "price_text": off.get("price_text"),
+                            "price_value": off.get("price_value"),
+                            "variants_count": off.get("variants_count"),
+                            "is_available": off.get("is_available"),
+                            "flags": off.get("flags"),
+                            "url": parsed.get("url"),
+                            "scraped_at": datetime.now(timezone.utc).isoformat(),
+                        })
                 print(f"[+] OK за {time.monotonic() - t0:.1f}с")
             except Exception as e:
                 print(f"[!] Final fail: {e}", file=sys.stderr)
