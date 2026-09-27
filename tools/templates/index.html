@@ -38,6 +38,15 @@
     <p class="text-xs text-slate-500 mt-2">Поддерживается только поиск по SKU. VIN и название — в следующей версии.</p>
   </form>
 
+  <!-- История -->
+  <div id="history" class="bg-white rounded-lg shadow-sm border border-slate-200 p-4 mb-6 hidden">
+    <div class="flex items-center justify-between mb-2">
+      <h3 class="text-sm font-semibold text-slate-700 uppercase">История поисков</h3>
+      <button id="history-refresh" class="text-xs text-blue-600 hover:underline">обновить</button>
+    </div>
+    <div id="history-list" class="flex flex-wrap gap-2"></div>
+  </div>
+
   <!-- Прогресс -->
   <div id="progress" class="hidden bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-6">
     <h2 class="text-lg font-semibold text-slate-900 mb-3">Поиск в процессе…</h2>
@@ -90,7 +99,13 @@ form.addEventListener('submit', async (e) => {
       const err = await resp.json();
       throw new Error(err.detail?.message || err.message || `HTTP ${resp.status}`);
     }
-    const {search_id, sku} = await resp.json();
+    const {search_id, sku, from_cache} = await resp.json();
+    if (from_cache) {
+      const cached = await fetch(`/api/search/${search_id}`).then(r => r.json());
+      progress.classList.add('hidden');
+      renderResults(cached);
+      return;
+    }
 
     // Инициализируем прогресс
     ['exist', 'autodoc', 'rossko'].forEach(src => {
@@ -111,6 +126,7 @@ form.addEventListener('submit', async (e) => {
           clearInterval(poll);
           progress.classList.add('hidden');
           renderResults(data);
+          loadHistory();
         } else if (data.status === 'error') {
           clearInterval(poll);
           progress.classList.add('hidden');
@@ -149,6 +165,35 @@ function showError(msg) {
   errorBox.classList.remove('hidden');
   errorMsg.textContent = msg;
 }
+
+async function loadHistory() {
+  try {
+    const r = await fetch('/api/history');
+    const data = await r.json();
+    const list = document.getElementById('history-list');
+    const wrap = document.getElementById('history');
+    if (!data.history || data.history.length === 0) {
+      wrap.classList.add('hidden');
+      return;
+    }
+    wrap.classList.remove('hidden');
+    list.innerHTML = '';
+    data.history.forEach(h => {
+      const t = new Date(h.ts).toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'});
+      const btn = document.createElement('button');
+      btn.className = 'px-3 py-1 bg-slate-100 hover:bg-slate-200 rounded text-sm';
+      btn.innerHTML = `<span class="font-mono">${h.sku}</span> <span class="text-xs text-slate-500">${h.records_count} офферов · ${t}</span>`;
+      btn.onclick = () => {
+        document.getElementById('q').value = h.sku;
+        document.getElementById('search-form').dispatchEvent(new Event('submit', {cancelable: true}));
+      };
+      list.appendChild(btn);
+    });
+  } catch (e) {}
+}
+
+document.getElementById('history-refresh').addEventListener('click', loadHistory);
+loadHistory();
 
 function renderResults(data) {
   if (!data.result || !data.result.cards || data.result.cards.length === 0) {

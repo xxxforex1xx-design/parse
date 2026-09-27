@@ -14,6 +14,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import os
 import sys
 import time
@@ -41,6 +42,7 @@ from fastapi import Request  # noqa: E402
 from pydantic import BaseModel  # noqa: E402
 
 from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout  # noqa: E402
+from playwright._impl._errors import Error as PWError  # noqa: E402
 
 from rate_limited_parser import (  # noqa: E402
     parse_exist, parse_autodoc, parse_rossko, UA,
@@ -49,10 +51,46 @@ from aggregator import aggregate, normalize_sku  # noqa: E402
 
 TEMPLATES_DIR = WORKSPACE / "tools" / "templates"
 STATIC_DIR = WORKSPACE / "tools" / "static"
+CACHE_DIR = WORKSPACE / "tools" / "cache"
 
 # Хранилище статусов поиска в памяти (in-memory).
 # В проде — Redis, но для MVP достаточно.
 SEARCHES: dict[str, dict[str, Any]] = {}
+
+# История поисков (последние N, в памяти)
+HISTORY_MAX = 20
+HISTORY: list[dict[str, Any]] = []
+
+
+def cache_path(sku: str) -> Path:
+    return CACHE_DIR / f"{sku}.json"
+
+
+def load_cache(sku: str) -> dict[str, Any] | None:
+    p = cache_path(sku)
+    if not p.exists():
+        return None
+    try:
+        return json.loads(p.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return None
+
+
+def save_cache(sku: str, data: dict[str, Any]) -> None:
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    cache_path(sku).write_text(json.dumps(data, ensure_ascii=False, indent=2),
+                              encoding="utf-8")
+
+
+def add_to_history(sku: str, sources: list[str], records_count: int) -> None:
+    HISTORY.insert(0, {
+        "sku": sku,
+        "sources": sources,
+        "records_count": records_count,
+        "ts": datetime.now(timezone.utc).isoformat(),
+    })
+    while len(HISTORY) > HISTORY_MAX:
+        HISTORY.pop()
 
 
 def _normalize_query(q: str) -> tuple[str, str]:
@@ -207,6 +245,23 @@ async def start_search(req: SearchRequest):
             },
         )
 
+    # Сначала проверяем кэш
+    cached = load_cache(sku)
+    if cached and set(cached.get("_sources", [])) >= set(req.sources):
+        search_id = str(uuid.uuid4())[:8]
+        SEARCHES[search_id] = {
+            "status": "done",
+            "started_at": cached.get("cached_at"),
+            "sku": sku,
+            "sources": req.sources,
+            "progress": {src: "cached" for src in req.sources},
+            "result": cached["result"],
+            "records_count": cached.get("records_count", 0),
+            "from_cache": True,
+            "error": None,
+        }
+        return {"search_id": search_id, "sku": sku, "from_cache": True}
+
     search_id = str(uuid.uuid4())[:8]
     SEARCHES[search_id] = {
         "status": "running",
@@ -215,42 +270,72 @@ async def start_search(req: SearchRequest):
         "sources": req.sources,
         "progress": {},
         "result": None,
+        "from_cache": False,
         "error": None,
     }
 
     asyncio.create_task(_do_search(search_id, sku, req.sources, req.min_delay, req.max_delay))
-    return {"search_id": search_id, "sku": sku}
+    return {"search_id": search_id, "sku": sku, "from_cache": False}
 
 
 async def _do_search(search_id: str, sku: str, sources: list[str],
                       min_delay: float, max_delay: float) -> None:
     """Фоновая задача: парсит 3 источника, обновляет прогресс."""
-    try:
-        # Запускаем синхронный crawler в executor
-        loop = asyncio.get_event_loop()
-        sources_set = set(sources)
-        SEARCHES[search_id]["progress"] = {src: "queued" for src in sources_set}
+    loop = asyncio.get_event_loop()
+    sources_set = set(sources)
+    SEARCHES[search_id]["progress"] = {src: "queued" for src in sources_set}
+    for src in sources_set:
+        SEARCHES[search_id]["progress"][src] = "running"
 
-        # Помечаем прогресс по источникам
-        for src in sources_set:
-            SEARCHES[search_id]["progress"][src] = "running"
+    # Retry на запуск Playwright (EPIPE на Windows)
+    records: list[dict[str, Any]] = []
+    last_err = None
+    for attempt in range(3):
+        try:
+            records = await loop.run_in_executor(
+                None,
+                _run_search_sync,
+                sku, sources_set, min_delay, max_delay,
+            )
+            last_err = None
+            break
+        except (PWError, PWTimeout, OSError, RuntimeError) as e:
+            last_err = e
+            wait = 5 * (attempt + 1)
+            SEARCHES[search_id]["error"] = f"Попытка {attempt+1}/3: {type(e).__name__}: {str(e)[:120]}"
+            await asyncio.sleep(wait)
+        except Exception as e:
+            last_err = e
+            SEARCHES[search_id]["error"] = f"Попытка {attempt+1}/3: {type(e).__name__}: {str(e)[:120]}"
+            break
 
-        records = await loop.run_in_executor(
-            None,
-            _run_search_sync,
-            sku, sources_set, min_delay, max_delay,
-        )
+    for src in sources_set:
+        SEARCHES[search_id]["progress"][src] = "done"
 
-        for src in sources_set:
-            SEARCHES[search_id]["progress"][src] = "done"
-
-        result = aggregate(records)
-        SEARCHES[search_id]["status"] = "done"
-        SEARCHES[search_id]["result"] = result
-        SEARCHES[search_id]["records_count"] = len(records)
-    except Exception as e:
+    if last_err:
         SEARCHES[search_id]["status"] = "error"
-        SEARCHES[search_id]["error"] = str(e)
+        if not SEARCHES[search_id].get("error"):
+            SEARCHES[search_id]["error"] = f"Все попытки упали: {last_err}"
+        return
+
+    if not records:
+        SEARCHES[search_id]["status"] = "error"
+        SEARCHES[search_id]["error"] = "Ничего не найдено"
+        return
+
+    result = aggregate(records)
+    SEARCHES[search_id]["status"] = "done"
+    SEARCHES[search_id]["result"] = result
+    SEARCHES[search_id]["records_count"] = len(records)
+
+    save_cache(sku, {
+        "sku": sku,
+        "_sources": list(sources_set),
+        "records_count": len(records),
+        "cached_at": datetime.now(timezone.utc).isoformat(),
+        "result": result,
+    })
+    add_to_history(sku, list(sources_set), len(records))
 
 
 @app.get("/api/search/{search_id}")
@@ -259,6 +344,21 @@ async def get_search(search_id: str):
     if search_id not in SEARCHES:
         raise HTTPException(404, "search_id not found")
     return SEARCHES[search_id]
+
+
+@app.get("/api/history")
+async def get_history():
+    """Последние N поисковых запросов."""
+    return {"history": HISTORY}
+
+
+@app.get("/api/cache/{sku}")
+async def get_cache(sku: str):
+    """Получить кэшированный результат для SKU."""
+    cached = load_cache(sku)
+    if not cached:
+        raise HTTPException(404, "not cached")
+    return cached
 
 
 if __name__ == "__main__":

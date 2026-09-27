@@ -1,0 +1,1693 @@
+{
+  "sku": "6RU698151",
+  "_sources": [
+    "exist",
+    "autodoc",
+    "rossko"
+  ],
+  "records_count": 331,
+  "cached_at": "2026-09-27T15:34:11.980081+00:00",
+  "result": {
+    "cards_count": 1,
+    "cards": [
+      {
+        "sku": "6RU698151",
+        "offers_count": 331,
+        "sources": [
+          "autodoc",
+          "exist",
+          "rossko"
+        ],
+        "brands_count": 162,
+        "min_price": 393.0,
+        "max_price": 27122.0,
+        "best_price": {
+          "source": "exist",
+          "sku": "6RU698151",
+          "brand": "Segmatic",
+          "name": null,
+          "price": 393.0,
+          "price_text": "от 393 ₽",
+          "in_stock": true,
+          "variants": null,
+          "is_original": false,
+          "url": "https://www.exist.ru/Price/?pid=F41092C5",
+          "scraped_at": "2026-09-27T15:33:18.224285+00:00"
+        },
+        "best_in_stock": {
+          "source": "exist",
+          "sku": "6RU698151",
+          "brand": "Segmatic",
+          "name": null,
+          "price": 393.0,
+          "price_text": "от 393 ₽",
+          "in_stock": true,
+          "variants": null,
+          "is_original": false,
+          "url": "https://www.exist.ru/Price/?pid=F41092C5",
+          "scraped_at": "2026-09-27T15:33:18.224285+00:00"
+        },
+        "best_original": {
+          "source": "rossko",
+          "sku": "6RU698151",
+          "brand": "VAG",
+          "name": "Колодки тормозные дисковые, передние",
+          "price": 894.0,
+          "price_text": "от 894 ₽",
+          "in_stock": true,
+          "variants": null,
+          "is_original": true,
+          "url": "https://rossko.ru/single/search/?focus_request_id=e3ce829886&q=6RU698151",
+          "scraped_at": "2026-09-27T15:33:18.224285+00:00"
+        },
+        "brands": [
+          {
+            "brand": "Segmatic",
+            "offers_count": 7,
+            "min_price": 393.0,
+            "max_price": 1357.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Asin",
+            "offers_count": 3,
+            "min_price": 673.0,
+            "max_price": 957.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "TSN",
+            "offers_count": 3,
+            "min_price": 842.0,
+            "max_price": 1102.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "ASP",
+            "offers_count": 1,
+            "min_price": 870.0,
+            "max_price": 870.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "VAG",
+            "offers_count": 4,
+            "min_price": 894.0,
+            "max_price": 27122.0,
+            "is_original": true,
+            "sources": [
+              "autodoc",
+              "exist",
+              "rossko"
+            ]
+          },
+          {
+            "brand": "Porsche",
+            "offers_count": 1,
+            "min_price": 894.0,
+            "max_price": 894.0,
+            "is_original": true,
+            "sources": [
+              "rossko"
+            ]
+          },
+          {
+            "brand": "Finwhale",
+            "offers_count": 4,
+            "min_price": 894.0,
+            "max_price": 2378.0,
+            "is_original": false,
+            "sources": [
+              "exist",
+              "rossko"
+            ]
+          },
+          {
+            "brand": "ANYU",
+            "offers_count": 1,
+            "min_price": 916.0,
+            "max_price": 916.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "LAVS",
+            "offers_count": 1,
+            "min_price": 917.0,
+            "max_price": 917.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Brave",
+            "offers_count": 2,
+            "min_price": 934.0,
+            "max_price": 993.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Woking",
+            "offers_count": 1,
+            "min_price": 957.0,
+            "max_price": 957.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Amd",
+            "offers_count": 6,
+            "min_price": 998.0,
+            "max_price": 2689.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Narichin",
+            "offers_count": 1,
+            "min_price": 1001.0,
+            "max_price": 1001.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "ADR",
+            "offers_count": 3,
+            "min_price": 1003.0,
+            "max_price": 1108.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Exist",
+            "offers_count": 2,
+            "min_price": 1006.0,
+            "max_price": 1300.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Amiwa",
+            "offers_count": 2,
+            "min_price": 1013.0,
+            "max_price": 1051.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Ixat",
+            "offers_count": 1,
+            "min_price": 1027.0,
+            "max_price": 1027.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Ossca",
+            "offers_count": 2,
+            "min_price": 1029.0,
+            "max_price": 1186.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "QML",
+            "offers_count": 1,
+            "min_price": 1034.0,
+            "max_price": 1034.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Lex",
+            "offers_count": 2,
+            "min_price": 1039.0,
+            "max_price": 1320.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Kroner",
+            "offers_count": 2,
+            "min_price": 1040.0,
+            "max_price": 1337.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Holars",
+            "offers_count": 2,
+            "min_price": 1063.0,
+            "max_price": 1137.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Arirang",
+            "offers_count": 1,
+            "min_price": 1073.0,
+            "max_price": 1073.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Partra",
+            "offers_count": 1,
+            "min_price": 1073.0,
+            "max_price": 1073.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Redrex",
+            "offers_count": 1,
+            "min_price": 1077.0,
+            "max_price": 1077.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Sangsin",
+            "offers_count": 8,
+            "min_price": 1097.0,
+            "max_price": 3051.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Pilenga",
+            "offers_count": 6,
+            "min_price": 1098.0,
+            "max_price": 1556.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "O.E.M.",
+            "offers_count": 1,
+            "min_price": 1107.0,
+            "max_price": 1107.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Vika",
+            "offers_count": 2,
+            "min_price": 1152.0,
+            "max_price": 2217.0,
+            "is_original": false,
+            "sources": [
+              "exist",
+              "rossko"
+            ]
+          },
+          {
+            "brand": "TechWit",
+            "offers_count": 1,
+            "min_price": 1156.0,
+            "max_price": 1156.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "DAfmi",
+            "offers_count": 1,
+            "min_price": 1160.0,
+            "max_price": 1160.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Lecar",
+            "offers_count": 1,
+            "min_price": 1173.0,
+            "max_price": 1173.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Sat",
+            "offers_count": 1,
+            "min_price": 1178.0,
+            "max_price": 1178.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Hans Pries",
+            "offers_count": 3,
+            "min_price": 1200.0,
+            "max_price": 3526.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "RoadRunner",
+            "offers_count": 1,
+            "min_price": 1217.0,
+            "max_price": 1217.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Quattro freni",
+            "offers_count": 2,
+            "min_price": 1219.0,
+            "max_price": 1451.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Sufix",
+            "offers_count": 3,
+            "min_price": 1225.0,
+            "max_price": 1445.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Double force",
+            "offers_count": 2,
+            "min_price": 1231.0,
+            "max_price": 1762.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Bota",
+            "offers_count": 2,
+            "min_price": 1246.0,
+            "max_price": 1254.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Hola",
+            "offers_count": 2,
+            "min_price": 1271.0,
+            "max_price": 1356.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Beser",
+            "offers_count": 3,
+            "min_price": 1273.0,
+            "max_price": 1521.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Riginal",
+            "offers_count": 2,
+            "min_price": 1348.0,
+            "max_price": 1953.0,
+            "is_original": false,
+            "sources": [
+              "exist",
+              "rossko"
+            ]
+          },
+          {
+            "brand": "S&K GmbH",
+            "offers_count": 1,
+            "min_price": 1350.0,
+            "max_price": 1350.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Kortex",
+            "offers_count": 3,
+            "min_price": 1367.0,
+            "max_price": 1575.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Schoffer",
+            "offers_count": 1,
+            "min_price": 1397.0,
+            "max_price": 1397.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Dynamatrix",
+            "offers_count": 1,
+            "min_price": 1415.0,
+            "max_price": 1415.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Anchi",
+            "offers_count": 1,
+            "min_price": 1416.0,
+            "max_price": 1416.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "JD",
+            "offers_count": 1,
+            "min_price": 1425.0,
+            "max_price": 1425.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Linkglobal",
+            "offers_count": 1,
+            "min_price": 1433.0,
+            "max_price": 1433.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Senfineco",
+            "offers_count": 2,
+            "min_price": 1442.0,
+            "max_price": 1523.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Sumomoto",
+            "offers_count": 1,
+            "min_price": 1447.0,
+            "max_price": 1447.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Tyren",
+            "offers_count": 2,
+            "min_price": 1448.0,
+            "max_price": 1804.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "SCT",
+            "offers_count": 2,
+            "min_price": 1449.0,
+            "max_price": 1619.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Bapco",
+            "offers_count": 2,
+            "min_price": 1472.0,
+            "max_price": 1907.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Simpeco",
+            "offers_count": 1,
+            "min_price": 1487.0,
+            "max_price": 1487.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Vkt",
+            "offers_count": 1,
+            "min_price": 1508.0,
+            "max_price": 1508.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Cworks",
+            "offers_count": 2,
+            "min_price": 1524.0,
+            "max_price": 1797.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Blitz",
+            "offers_count": 4,
+            "min_price": 1533.0,
+            "max_price": 2016.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Kraft",
+            "offers_count": 2,
+            "min_price": 1542.0,
+            "max_price": 1865.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Мавико",
+            "offers_count": 1,
+            "min_price": 1542.0,
+            "max_price": 1542.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Stellox",
+            "offers_count": 2,
+            "min_price": 1555.0,
+            "max_price": 1933.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Автореал",
+            "offers_count": 2,
+            "min_price": 1558.0,
+            "max_price": 1566.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Baikor",
+            "offers_count": 1,
+            "min_price": 1575.0,
+            "max_price": 1575.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Korwin",
+            "offers_count": 1,
+            "min_price": 1575.0,
+            "max_price": 1575.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Jeenice",
+            "offers_count": 1,
+            "min_price": 1594.0,
+            "max_price": 1594.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "LorO",
+            "offers_count": 1,
+            "min_price": 1615.0,
+            "max_price": 1615.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "BSG",
+            "offers_count": 1,
+            "min_price": 1644.0,
+            "max_price": 1644.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Zekkert",
+            "offers_count": 3,
+            "min_price": 1649.0,
+            "max_price": 2412.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Support Technology",
+            "offers_count": 1,
+            "min_price": 1656.0,
+            "max_price": 1656.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Fap",
+            "offers_count": 1,
+            "min_price": 1659.0,
+            "max_price": 1659.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Krauf",
+            "offers_count": 2,
+            "min_price": 1675.0,
+            "max_price": 1843.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Ween",
+            "offers_count": 2,
+            "min_price": 1676.0,
+            "max_price": 1685.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Rospart",
+            "offers_count": 3,
+            "min_price": 1685.0,
+            "max_price": 1863.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Transmaster universal",
+            "offers_count": 2,
+            "min_price": 1685.0,
+            "max_price": 1898.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Eurorepar",
+            "offers_count": 4,
+            "min_price": 1700.0,
+            "max_price": 6327.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Patron",
+            "offers_count": 2,
+            "min_price": 1713.0,
+            "max_price": 1885.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Miles",
+            "offers_count": 8,
+            "min_price": 1745.0,
+            "max_price": 3243.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Iberis",
+            "offers_count": 2,
+            "min_price": 1768.0,
+            "max_price": 2805.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Hi-Q",
+            "offers_count": 1,
+            "min_price": 1770.0,
+            "max_price": 1770.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Skyparts",
+            "offers_count": 1,
+            "min_price": 1790.0,
+            "max_price": 1790.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "SpeedMate",
+            "offers_count": 3,
+            "min_price": 1791.0,
+            "max_price": 2167.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Volram",
+            "offers_count": 1,
+            "min_price": 1797.0,
+            "max_price": 1797.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Aywiparts",
+            "offers_count": 2,
+            "min_price": 1808.0,
+            "max_price": 1811.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Febest",
+            "offers_count": 3,
+            "min_price": 1840.0,
+            "max_price": 2265.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "LPR",
+            "offers_count": 4,
+            "min_price": 1841.0,
+            "max_price": 3175.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Barnett",
+            "offers_count": 1,
+            "min_price": 1899.0,
+            "max_price": 1899.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "DelcoParts",
+            "offers_count": 3,
+            "min_price": 1913.0,
+            "max_price": 2005.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Avantech",
+            "offers_count": 2,
+            "min_price": 1922.0,
+            "max_price": 1927.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Trialli",
+            "offers_count": 4,
+            "min_price": 1929.0,
+            "max_price": 3186.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "AP (LPR)",
+            "offers_count": 2,
+            "min_price": 1941.0,
+            "max_price": 2696.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Dafmi",
+            "offers_count": 1,
+            "min_price": 1953.0,
+            "max_price": 1953.0,
+            "is_original": false,
+            "sources": [
+              "rossko"
+            ]
+          },
+          {
+            "brand": "Nakayama",
+            "offers_count": 1,
+            "min_price": 1971.0,
+            "max_price": 1971.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "AC Delco",
+            "offers_count": 2,
+            "min_price": 1980.0,
+            "max_price": 2015.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Avtopribor",
+            "offers_count": 3,
+            "min_price": 1981.0,
+            "max_price": 2282.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "MSF",
+            "offers_count": 1,
+            "min_price": 1982.0,
+            "max_price": 1982.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Akyoto",
+            "offers_count": 2,
+            "min_price": 1988.0,
+            "max_price": 2171.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "MegaPower",
+            "offers_count": 2,
+            "min_price": 1997.0,
+            "max_price": 2012.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Haruma",
+            "offers_count": 1,
+            "min_price": 2019.0,
+            "max_price": 2019.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "G-brake",
+            "offers_count": 1,
+            "min_price": 2046.0,
+            "max_price": 2046.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Zentparts",
+            "offers_count": 2,
+            "min_price": 2061.0,
+            "max_price": 2409.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Fenox",
+            "offers_count": 3,
+            "min_price": 2080.0,
+            "max_price": 2223.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Aiko",
+            "offers_count": 1,
+            "min_price": 2149.0,
+            "max_price": 2149.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Unio",
+            "offers_count": 1,
+            "min_price": 2163.0,
+            "max_price": 2163.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "KoTL",
+            "offers_count": 1,
+            "min_price": 2217.0,
+            "max_price": 2217.0,
+            "is_original": false,
+            "sources": [
+              "rossko"
+            ]
+          },
+          {
+            "brand": "Paraut",
+            "offers_count": 1,
+            "min_price": 2252.0,
+            "max_price": 2252.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Marshall",
+            "offers_count": 3,
+            "min_price": 2264.0,
+            "max_price": 2604.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Denckermann",
+            "offers_count": 1,
+            "min_price": 2278.0,
+            "max_price": 2278.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Tatsumi",
+            "offers_count": 3,
+            "min_price": 2297.0,
+            "max_price": 2546.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Kurosai",
+            "offers_count": 1,
+            "min_price": 2298.0,
+            "max_price": 2298.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Autorepar",
+            "offers_count": 1,
+            "min_price": 2310.0,
+            "max_price": 2310.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "ABS",
+            "offers_count": 1,
+            "min_price": 2337.0,
+            "max_price": 2337.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Caready",
+            "offers_count": 1,
+            "min_price": 2345.0,
+            "max_price": 2345.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Ganz",
+            "offers_count": 4,
+            "min_price": 2363.0,
+            "max_price": 3574.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Kamoka",
+            "offers_count": 1,
+            "min_price": 2390.0,
+            "max_price": 2390.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "LYNXauto",
+            "offers_count": 3,
+            "min_price": 2427.0,
+            "max_price": 3011.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Allied Nippon",
+            "offers_count": 2,
+            "min_price": 2483.0,
+            "max_price": 2946.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Metelli",
+            "offers_count": 3,
+            "min_price": 2492.0,
+            "max_price": 2733.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "G.U.D",
+            "offers_count": 1,
+            "min_price": 2535.0,
+            "max_price": 2535.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Maxgear",
+            "offers_count": 2,
+            "min_price": 2598.0,
+            "max_price": 3200.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "SRLine",
+            "offers_count": 1,
+            "min_price": 2612.0,
+            "max_price": 2612.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Kashiyama",
+            "offers_count": 3,
+            "min_price": 2669.0,
+            "max_price": 3164.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Metaco",
+            "offers_count": 3,
+            "min_price": 2690.0,
+            "max_price": 3421.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Mando",
+            "offers_count": 2,
+            "min_price": 2739.0,
+            "max_price": 3170.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Samko",
+            "offers_count": 1,
+            "min_price": 2753.0,
+            "max_price": 2753.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Icer",
+            "offers_count": 1,
+            "min_price": 2798.0,
+            "max_price": 2798.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Febi",
+            "offers_count": 3,
+            "min_price": 2833.0,
+            "max_price": 3426.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Masuma",
+            "offers_count": 2,
+            "min_price": 2838.0,
+            "max_price": 3051.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Schatz",
+            "offers_count": 1,
+            "min_price": 2902.0,
+            "max_price": 2902.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "ZF Russia",
+            "offers_count": 2,
+            "min_price": 2910.0,
+            "max_price": 3011.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Trusting",
+            "offers_count": 1,
+            "min_price": 2938.0,
+            "max_price": 2938.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Blue Print",
+            "offers_count": 2,
+            "min_price": 3017.0,
+            "max_price": 4570.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Profit",
+            "offers_count": 1,
+            "min_price": 3032.0,
+            "max_price": 3032.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "UBS",
+            "offers_count": 2,
+            "min_price": 3234.0,
+            "max_price": 3260.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Remsa",
+            "offers_count": 1,
+            "min_price": 3240.0,
+            "max_price": 3240.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Japan Parts",
+            "offers_count": 1,
+            "min_price": 3402.0,
+            "max_price": 3402.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "CTR",
+            "offers_count": 3,
+            "min_price": 3430.0,
+            "max_price": 3950.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Abe",
+            "offers_count": 3,
+            "min_price": 3432.0,
+            "max_price": 4157.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Ashika",
+            "offers_count": 1,
+            "min_price": 3434.0,
+            "max_price": 3434.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Tomex",
+            "offers_count": 1,
+            "min_price": 3451.0,
+            "max_price": 3451.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Delphi",
+            "offers_count": 3,
+            "min_price": 3481.0,
+            "max_price": 4400.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "NiBK",
+            "offers_count": 3,
+            "min_price": 3537.0,
+            "max_price": 4103.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Mobiland",
+            "offers_count": 2,
+            "min_price": 3597.0,
+            "max_price": 4048.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Jp Group",
+            "offers_count": 2,
+            "min_price": 3641.0,
+            "max_price": 4271.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "NGN",
+            "offers_count": 2,
+            "min_price": 3678.0,
+            "max_price": 4283.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Valeo",
+            "offers_count": 5,
+            "min_price": 3704.0,
+            "max_price": 5096.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "TRW",
+            "offers_count": 3,
+            "min_price": 3721.0,
+            "max_price": 4792.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "SB Nagamochi",
+            "offers_count": 4,
+            "min_price": 3802.0,
+            "max_price": 4702.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Meyle",
+            "offers_count": 1,
+            "min_price": 3887.0,
+            "max_price": 3887.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Road house",
+            "offers_count": 1,
+            "min_price": 3908.0,
+            "max_price": 3908.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Power stop",
+            "offers_count": 3,
+            "min_price": 4059.0,
+            "max_price": 4952.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Brembo",
+            "offers_count": 5,
+            "min_price": 4065.0,
+            "max_price": 13611.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Bosch",
+            "offers_count": 3,
+            "min_price": 4352.0,
+            "max_price": 5220.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "SKF",
+            "offers_count": 2,
+            "min_price": 4416.0,
+            "max_price": 5808.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Galfer",
+            "offers_count": 1,
+            "min_price": 4687.0,
+            "max_price": 4687.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Hella-Pagid",
+            "offers_count": 2,
+            "min_price": 5006.0,
+            "max_price": 5686.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Textar",
+            "offers_count": 2,
+            "min_price": 5142.0,
+            "max_price": 5557.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Ferodo",
+            "offers_count": 3,
+            "min_price": 5688.0,
+            "max_price": 8781.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Jurid/Bendix",
+            "offers_count": 2,
+            "min_price": 5728.0,
+            "max_price": 6966.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Ate",
+            "offers_count": 3,
+            "min_price": 6051.0,
+            "max_price": 8197.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Otto Zimmermann",
+            "offers_count": 1,
+            "min_price": 6647.0,
+            "max_price": 6647.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "Motrio",
+            "offers_count": 1,
+            "min_price": 6908.0,
+            "max_price": 6908.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          },
+          {
+            "brand": "EBC brakes",
+            "offers_count": 1,
+            "min_price": 14368.0,
+            "max_price": 14368.0,
+            "is_original": false,
+            "sources": [
+              "exist"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
