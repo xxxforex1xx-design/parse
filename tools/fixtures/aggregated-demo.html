@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>6RU698151 — Auto Parts Meta-Search</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --card-bg: #1a2128;
+      --card-bg-2: #232b34;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent: #2f81f7;
+      --accent-2: #1f6feb;
+      --border: #30363d;
+      --good: #3fb950;
+      --warn: #d29922;
+      --bad: #f85149;
+      --best: #ffd700;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px;
+      line-height: 1.5;
+    }
+    .container { max-width: 1100px; margin: 0 auto; }
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+    h1 { font-size: 24px; font-weight: 600; }
+    .sku { color: var(--text-muted); font-family: ui-monospace, monospace; }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+    .stat-value { font-size: 22px; font-weight: 600; }
+    .stat-value.best { color: var(--best); }
+    .best-section {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .best-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .best-card.original { border-left-color: var(--good); }
+    .best-card.instock { border-left-color: var(--warn); }
+    .best-card .source {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .best-card .price {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--best);
+      margin-bottom: 8px;
+    }
+    .best-card .brand {
+      font-size: 14px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .best-card .meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th {
+      background: var(--card-bg-2);
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--card-bg-2); }
+    .source-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .source-exist { background: #1f3d5c; color: #79c0ff; }
+    .source-autodoc { background: #5c3d1f; color: #ffa657; }
+    .source-rossko { background: #1f5c3d; color: #7ee787; }
+    .original-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 10px;
+      font-weight: 600;
+      background: var(--good);
+      color: #000;
+      margin-left: 4px;
+    }
+    .price-cell { font-weight: 600; color: var(--best); }
+    .footer {
+      margin-top: 32px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Карточка запчасти</h1>
+    <div class="sku">SKU: 6RU698151</div>
+  </header>
+
+  <div class="summary">
+    <div class="stat">
+      <div class="stat-label">Офферов</div>
+      <div class="stat-value">28</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Брендов</div>
+      <div class="stat-value">21</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Мин. цена</div>
+      <div class="stat-value">326 ₽</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Макс. цена</div>
+      <div class="stat-value">6726 ₽</div>
+    </div>
+  </div>
+
+  <div class="best-section">
+    <div class="best-card instock">
+      <div class="source">Лучшая цена</div>
+      <div class="price">326 ₽</div>
+      <div class="brand">Segmatic</div>
+      <div class="meta">
+        <span class="source-badge source-exist">exist</span>
+        
+      </div>
+    </div>
+    
+    <div class="best-card original">
+      <div class="source">Лучший оригинал</div>
+      <div class="price">894 ₽</div>
+      <div class="brand">VAG</div>
+      <div class="meta">
+        <span class="source-badge source-rossko">rossko</span>
+        <span class="original-badge">ОРИГИНАЛ</span>
+      </div>
+    </div>
+    
+    
+    <div class="best-card">
+      <div class="source">Лучшее в наличии</div>
+      <div class="price">326 ₽</div>
+      <div class="brand">Segmatic</div>
+      <div class="meta">
+        <span class="source-badge source-exist">exist</span>
+        
+      </div>
+    </div>
+    
+  </div>
+
+  <h2 style="margin-bottom:12px; font-size:18px;">Все бренды</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Бренд</th>
+        <th>Мин. цена</th>
+        <th>Макс. цена</th>
+        <th>Офферов</th>
+        <th>Источники</th>
+        <th>Оригинал</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+      <tr>
+        <td>
+          <strong>Segmatic</strong>
+          
+        </td>
+        <td class="price-cell">326 ₽</td>
+        <td>881 ₽</td>
+        <td>4</td>
+        <td>
+          
+          <span class="source-badge source-exist">exist</span>
+          
+        </td>
+        <td>—</td>
+      </tr>
+      
+      <tr>
+        <td>
+          <strong>Asin</strong>
+          
+        </td>
+        <td class="price-cell">673 ₽</td>
+        <td>957 ₽</td>
+        <td>2</td>
+        <td>
+          
+          <span class="source-badge source-exist">exist</span>
+          
+        </td>
+        <td>—</td>
+      </tr>
+      
+      <tr>
+        <td>
+          <strong>ADR</strong>
+          
+        </td>
+        <td class="price-cell">797 ₽</td>
+        <td>797 ₽</td>
+        <td>1</td>
+        <td>
+          
+          <span class="source-badge source-exist">exist</span>
+          
+        </td>
+        <td>—</td>
+      </tr>
+      
+      <tr>
+        <td>
+          <strong>QML</strong>
+          
+        </td>
+        <td class="price-cell">803 ₽</td>
+        <td>803 ₽</td>
+        <td>1</td>
+        <td>
+          
+          <span class="source-badge source-exist">exist</span>
+          
+        </td>
+        <td>—</td>
+      </tr>
+      
+      <tr>
+        <td>
+          <strong>Partra</strong>
+          
+        </td>
+        <td class="price-cell">829 ₽</td>
+        <td>829 ₽</td>
+        <td>1</td>
+        <td>
+          
+          <span class="source-badge source-exist">exist</span>
+          
+        </td>
+        <td>—</td>
+      </tr>
+      
+      <tr>
+        <td>
+          <strong>TSN</strong>
+          
+        </td>
+        <td class="price-cell">842 ₽</td>
+        <td>950 ₽</td>
+        <td>2</td>
+        <td>
+          
+          <span class="source-badge source-exist">exist</span>
+          
+        </td>
+        <td>—</td>
+      </tr>
+      
+      <tr>
+        <td>
+          <strong>ASP</strong>
+          
+        </td>
+        <td class="price-cell">870 ₽</td>
+        <td>870 ₽</td>
+        <td>1</td>
+        <td>
+          
+          <span class="source-badge source-exist">exist</span>
+          
+        </td>
+        <td>—</td>
+      </tr>
+      
+      <tr>
+        <td>
+          <strong>VAG</strong>
+          <span class="original-badge">ОРИГИНАЛ</span>
+        </td>
+        <td class="price-cell">894 ₽</td>
+        <td>6726 ₽</td>
+        <td>2</td>
+        <td>
+          
+          <span class="source-badge source-autodoc">autodoc</span>
+          
+          <span class="source-badge source-rossko">rossko</span>
+          
+        </td>
+        <td>да</td>
+      </tr>
+      
+      <tr>
+        <td>
+          <strong>Porsche</strong>
+          <span class="original-badge">ОРИГИНАЛ</span>
+        </td>
+        <td class="price-cell">894 ₽</td>
+        <td>894 ₽</td>
+        <td>1</td>
+        <td>
+          
+          <span class="source-badge source-rossko">rossko</span>
+          
+        </td>
+        <td>да</td>
+      </tr>
+      
+      <tr>
+        <td>
+          <strong>Finwhale</strong>
+          
+        </td>
+        <td class="price-cell">894 ₽</td>
+        <td>894 ₽</td>
+        <td>1</td>
+        <td>
+          
+          <span class="source-badge source-rossko">rossko</span>
+          
+        </td>
+        <td>—</td>
+      </tr>
+      
+      <tr>
+        <td>
+          <strong>ANYU</strong>
+          
+        </td>
+        <td class="price-cell">916 ₽</td>
+        <td>916 ₽</td>
+        <td>1</td>
+        <td>
+          
+          <span class="source-badge source-exist">exist</span>
+          
+        </td>
+        <td>—</td>
+      </tr>
+      
+      <tr>
+        <td>
+          <strong>LAVS</strong>
+          
+        </td>
+        <td class="price-cell">917 ₽</td>
+        <td>917 ₽</td>
+        <td>1</td>
+        <td>
+          
+          <span class="source-badge source-exist">exist</span>
+          
+        </td>
+        <td>—</td>
+      </tr>
+      
+      <tr>
+        <td>
+          <strong>Arirang</strong>
+          
+        </td>
+        <td class="price-cell">926 ₽</td>
+        <td>926 ₽</td>
+        <td>1</td>
+        <td>
+          
+          <span class="source-badge source-exist">exist</span>
+          
+        </td>
+        <td>—</td>
+      </tr>
+      
+      <tr>
+        <td>
+          <strong>Brave</strong>
+          
+        </td>
+        <td class="price-cell">934 ₽</td>
+        <td>993 ₽</td>
+        <td>2</td>
+        <td>
+          
+          <span class="source-badge source-exist">exist</span>
+          
+        </td>
+        <td>—</td>
+      </tr>
+      
+      <tr>
+        <td>
+          <strong>Anchi</strong>
+          
+        </td>
+        <td class="price-cell">956 ₽</td>
+        <td>956 ₽</td>
+        <td>1</td>
+        <td>
+          
+          <span class="source-badge source-exist">exist</span>
+          
+        </td>
+        <td>—</td>
+      </tr>
+      
+      <tr>
+        <td>
+          <strong>Woking</strong>
+          
+        </td>
+        <td class="price-cell">957 ₽</td>
+        <td>957 ₽</td>
+        <td>1</td>
+        <td>
+          
+          <span class="source-badge source-exist">exist</span>
+          
+        </td>
+        <td>—</td>
+      </tr>
+      
+      <tr>
+        <td>
+          <strong>Sangsin</strong>
+          
+        </td>
+        <td class="price-cell">989 ₽</td>
+        <td>989 ₽</td>
+        <td>1</td>
+        <td>
+          
+          <span class="source-badge source-exist">exist</span>
+          
+        </td>
+        <td>—</td>
+      </tr>
+      
+      <tr>
+        <td>
+          <strong>Riginal</strong>
+          
+        </td>
+        <td class="price-cell">1953 ₽</td>
+        <td>1953 ₽</td>
+        <td>1</td>
+        <td>
+          
+          <span class="source-badge source-rossko">rossko</span>
+          
+        </td>
+        <td>—</td>
+      </tr>
+      
+      <tr>
+        <td>
+          <strong>Dafmi</strong>
+          
+        </td>
+        <td class="price-cell">1953 ₽</td>
+        <td>1953 ₽</td>
+        <td>1</td>
+        <td>
+          
+          <span class="source-badge source-rossko">rossko</span>
+          
+        </td>
+        <td>—</td>
+      </tr>
+      
+      <tr>
+        <td>
+          <strong>Vika</strong>
+          
+        </td>
+        <td class="price-cell">2217 ₽</td>
+        <td>2217 ₽</td>
+        <td>1</td>
+        <td>
+          
+          <span class="source-badge source-rossko">rossko</span>
+          
+        </td>
+        <td>—</td>
+      </tr>
+      
+      <tr>
+        <td>
+          <strong>KoTL</strong>
+          
+        </td>
+        <td class="price-cell">2217 ₽</td>
+        <td>2217 ₽</td>
+        <td>1</td>
+        <td>
+          
+          <span class="source-badge source-rossko">rossko</span>
+          
+        </td>
+        <td>—</td>
+      </tr>
+      
+    </tbody>
+  </table>
+
+  <div class="footer">
+    Auto Parts Meta-Search · 3 источника:
+    autodoc, exist, rossko ·
+    Сгенерировано из aggregated-demo.json
+  </div>
+</div>
+</body>
+</html>

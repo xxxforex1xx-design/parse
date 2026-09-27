@@ -140,7 +140,7 @@ ROSSKO_PARSE_JS = r"""
     const priceValue = cleanNum(priceText);
     const costText = text(card.querySelector('.cost')) || '';
     const variantsCount = cleanVariants(costText);
-    const isAvailable = ('Нет в наличии' not in fullText) && (priceValue !== null);
+    const isAvailable = !fullText.includes('Нет в наличии') && (priceValue !== null);
     const flagsText = Array.from(card.querySelectorAll('.badge, .promo-label'))
       .map(b => text(b)).filter(Boolean).join(', ') || null;
     offers.push({ brand, name, price_text: priceText, price_value: priceValue,
