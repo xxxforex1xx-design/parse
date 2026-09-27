@@ -390,6 +390,43 @@ async def get_cache(sku: str):
     return cached
 
 
+@app.get("/api/export/{sku}.csv")
+async def export_csv(sku: str):
+    """Экспорт результата в CSV (из кэша или текущего search_id)."""
+    cached = load_cache(sku)
+    if not cached:
+        raise HTTPException(404, "not cached")
+
+    rows = []
+    for card in cached.get("result", {}).get("cards", []):
+        for brand in card.get("brands", []):
+            rows.append({
+                "sku": card["sku"],
+                "brand": brand["brand"],
+                "min_price": brand["min_price"],
+                "max_price": brand["max_price"],
+                "is_original": brand["is_original"],
+                "sources": ",".join(brand.get("sources", [])),
+                "offers_count": brand["offers_count"],
+                "card_offers_count": card["offers_count"],
+            })
+
+    # Простой CSV (без csv-модуля, чтобы не тянуть лишнее)
+    lines = ["sku,brand,min_price,max_price,is_original,sources,offers_count,card_offers_count"]
+    for r in rows:
+        lines.append(
+            f'{r["sku"]},{r["brand"]},{r["min_price"]:.0f},{r["max_price"]:.0f},'
+            f'{r["is_original"]},{r["sources"]},{r["offers_count"]},{r["card_offers_count"]}'
+        )
+
+    from fastapi.responses import PlainTextResponse
+    return PlainTextResponse(
+        content="\n".join(lines),
+        media_type="text/csv; charset=utf-8",
+        headers={"Content-Disposition": f"attachment; filename={sku}.csv"},
+    )
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000, log_level="info")

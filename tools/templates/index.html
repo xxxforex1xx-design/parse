@@ -219,11 +219,19 @@ function renderCard(card) {
   const bp = card.best_price;
   const bo = card.best_original;
 
+  // Фильтр по брендам (UI-state)
+  const stateId = `card-${card.sku}`;
+  const allBrands = card.brands.map(b => b.brand);
+
   let head = `
-    <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-      <div class="flex items-baseline gap-3 mb-4">
-        <h2 class="text-2xl font-bold text-slate-900">${card.sku}</h2>
-        <span class="text-sm text-slate-500">${card.sources.join(', ')}</span>
+    <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6" id="${stateId}">
+      <div class="flex items-baseline justify-between mb-4">
+        <div class="flex items-baseline gap-3">
+          <h2 class="text-2xl font-bold text-slate-900">${card.sku}</h2>
+          <span class="text-sm text-slate-500">${card.sources.join(', ')}</span>
+        </div>
+        <a href="/api/export/${card.sku}.csv" download="${card.sku}.csv"
+           class="text-sm text-blue-600 hover:underline">⬇ Скачать CSV</a>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
@@ -244,9 +252,26 @@ function renderCard(card) {
         </div>
       </div>
 
-      <h3 class="text-sm font-semibold text-slate-700 uppercase mb-2">Все бренды</h3>
+      <div class="flex items-center justify-between mb-2 gap-3">
+        <h3 class="text-sm font-semibold text-slate-700 uppercase">Все бренды</h3>
+        <div class="flex items-center gap-2">
+          <label class="text-xs text-slate-500">Сортировка:</label>
+          <select class="sort-select text-xs border border-slate-300 rounded px-2 py-1"
+                  data-card="${stateId}">
+            <option value="price-asc">Цена ↑</option>
+            <option value="price-desc">Цена ↓</option>
+            <option value="name">Бренд А-Я</option>
+            <option value="offers">Кол-во офферов</option>
+          </select>
+          <input type="search" placeholder="фильтр по бренду" data-card="${stateId}"
+                 class="brand-filter text-xs border border-slate-300 rounded px-2 py-1 w-40">
+          <button class="text-xs text-slate-500 hover:text-slate-800"
+                  data-card="${stateId}" data-action="reset">сброс</button>
+        </div>
+      </div>
+
       <div class="overflow-x-auto">
-        <table class="min-w-full text-sm">
+        <table class="brands-table min-w-full text-sm" data-card="${stateId}">
           <thead class="text-xs uppercase text-slate-500 border-b border-slate-200">
             <tr>
               <th class="text-left py-2 pr-4">Цена</th>
@@ -261,7 +286,9 @@ function renderCard(card) {
 
   card.brands.forEach(b => {
     head += `
-      <tr class="border-b border-slate-100">
+      <tr class="brand-row border-b border-slate-100" data-brand="${b.brand.toLowerCase()}"
+          data-min-price="${b.min_price}" data-name="${b.brand.toLowerCase()}"
+          data-offers="${b.offers_count}">
         <td class="py-2 pr-4 font-mono text-slate-900">${fmtPrice(b.min_price)}${b.max_price > b.min_price ? ' – ' + fmtPrice(b.max_price) : ''}</td>
         <td class="py-2 pr-4 text-slate-800">${b.brand}</td>
         <td class="py-2 pr-4 text-slate-600 text-xs">${b.sources.join(', ')}</td>
@@ -278,6 +305,56 @@ function renderCard(card) {
     </div>
   `;
   return head;
+}
+
+// Инициализация фильтров/сортировки для каждой карточки
+document.addEventListener('click', (e) => {
+  if (e.target.dataset && e.target.dataset.action === 'reset') {
+    const cardId = e.target.dataset.card;
+    const card = document.getElementById(cardId);
+    card.querySelector('.brand-filter').value = '';
+    card.querySelector('.sort-select').value = 'price-asc';
+    sortAndFilter(card);
+  }
+});
+document.addEventListener('input', (e) => {
+  if (e.target.classList.contains('brand-filter')) {
+    sortAndFilter(e.target.closest('.bg-white'));
+  }
+});
+document.addEventListener('change', (e) => {
+  if (e.target.classList.contains('sort-select')) {
+    sortAndFilter(e.target.closest('.bg-white'));
+  }
+});
+
+function sortAndFilter(card) {
+  const filterInput = card.querySelector('.brand-filter');
+  const sortSelect = card.querySelector('.sort-select');
+  const tbody = card.querySelector('tbody');
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+
+  const filter = (filterInput.value || '').toLowerCase().trim();
+  const sortKey = sortSelect.value;
+
+  // Фильтр
+  rows.forEach(row => {
+    const brand = row.dataset.brand;
+    row.style.display = brand.includes(filter) ? '' : 'none';
+  });
+
+  // Сортировка
+  const visible = rows.filter(r => r.style.display !== 'none');
+  visible.sort((a, b) => {
+    switch (sortKey) {
+      case 'price-asc':  return parseFloat(a.dataset.minPrice) - parseFloat(b.dataset.minPrice);
+      case 'price-desc': return parseFloat(b.dataset.minPrice) - parseFloat(a.dataset.minPrice);
+      case 'name':       return a.dataset.name.localeCompare(b.dataset.name);
+      case 'offers':     return parseInt(b.dataset.offers) - parseInt(a.dataset.offers);
+      default:           return 0;
+    }
+  });
+  visible.forEach(row => tbody.appendChild(row));
 }
 </script>
 
