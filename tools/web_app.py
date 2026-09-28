@@ -413,18 +413,24 @@ async def get_cache(cache_key: str):
     return cached
 
 
-@app.get("/api/export/{cache_key:path}.csv")
+@app.get("/api/export/{cache_key:path}")
 async def export_csv(cache_key: str):
-    """Экспорт результата в CSV (из кэша)."""
-    if not cache_key.endswith(".csv"):
-        cache_key = cache_key + ".csv"
-    return _do_export(cache_key[:-4])
+    """Экспорт результата в CSV (из кэша).
+
+    Принимает cache_key с или без .csv на конце:
+      /api/export/6RU698151       → OK
+      /api/export/6RU698151.csv   → OK
+      /api/export/vin_<hash>      → OK
+    """
+    if cache_key.endswith(".csv"):
+        cache_key = cache_key[:-4]
+    return _do_export(cache_key)
 
 
 def _do_export(cache_key: str):
     cached = load_cache(cache_key)
     if not cached:
-        raise HTTPException(404, "not cached")
+        raise HTTPException(404, f"not cached: {cache_key}")
 
     rows = []
     for card in cached.get("result", {}).get("cards", []):
