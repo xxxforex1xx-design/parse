@@ -1,0 +1,22 @@
+# Auto Parts Meta-Search — runtime + dev dependencies
+#
+# Версии зафиксированы по нижней границе (>=), чтобы CI/локальная сборка
+# получали стабильный набор совместимых пакетов. Точные версии — в Pipfile.lock
+# или constraints.txt (если появятся).
+
+# ── Web framework ──────────────────────────────────────────────────────
+fastapi>=0.110.0        # REST + Jinja2Templates
+uvicorn[standard]>=0.27.0  # ASGI-сервер
+jinja2>=3.1.0           # шаблоны
+pydantic>=2.6.0         # валидация /api/search payload
+
+# ── Парсеры ────────────────────────────────────────────────────────────
+playwright>=1.50.0      # Chromium для Exist/Autodoc/Rossko
+beautifulsoup4>=4.12.0  # BS4-парсеры (фикстуры)
+lxml>=5.0.0             # быстрый парсер для BS4
+
+# ── Dev / tests ────────────────────────────────────────────────────────
+# (тесты запускаются локально и в CI, но прод-образ ставит всё равно —
+# это простой MVP, нет смысла разделять base/dev requirements)
+pytest>=8.0.0
+pytest-anyio>=0.0.0     # anyio backend для pytest (FastAPI test client)

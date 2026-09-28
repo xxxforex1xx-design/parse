@@ -1,0 +1,41 @@
+{
+  "name": "autoparts-meta-search",
+  "description": "Auto Parts Meta-Search MVP — поиск автозапчастей по артикулу/VIN/названию через Exist + Autodoc + Rossko.",
+  "keywords": ["python", "fastapi", "playwright", "auto-parts", "meta-search"],
+  "repository": "https://github.com/xxxforex1xx-design/parse",
+  "website": "https://github.com/xxxforex1xx-design/parse",
+  "env": {
+    "PYTHONUNBUFFERED": {
+      "description": "Не буферизовать stdout (важно для логов контейнера).",
+      "value": "1"
+    },
+    "PYTHONIOENCODING": {
+      "description": "Кодировка stdout по умолчанию.",
+      "value": "utf-8"
+    },
+    "WEB_APP_PORT": {
+      "description": "Порт FastAPI (Dokku прокидывает PORT автоматически).",
+      "value": "8000"
+    }
+  },
+  "healthchecks": {
+    "web": [
+      {
+        "path": "/",
+        "attempts": 3,
+        "timeout": 5,
+        "interval": 30
+      }
+    ]
+  },
+  "buildpacks": [
+    {
+      "url": "heroku-buildpack-python"
+    }
+  ],
+  "scripts": {
+    "dokku": {
+      "postdeploy": "echo 'Deploy OK. Visit: https://autoparts-meta-search.example.com'"
+    }
+  }
+}

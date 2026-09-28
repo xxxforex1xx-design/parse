@@ -55,8 +55,6 @@
 ## 🔴 Не сделано (TODO)
 
 ### Высокий приоритет
-- [ ] Dockerfile для деплоя
-- [ ] Procfile для Dokku (есть в SPEC, платформа — Hetzner)
 - [ ] Детальная карточка бренда (раскрытие по клику)
 - [ ] Сравнение 2-3 SKU рядом
 
@@ -80,6 +78,18 @@
   - Колонка «Ссылка» в таблице брендов (`brand.offer_url`)
   - `↗ открыть` у каждого оффера в best-блоках
 - [x] CSV экспорт теперь включает `offer_url`
+
+## ✅ Done in v3.2 (dev)
+
+- [x] **Dockerfile** на базе `mcr.microsoft.com/playwright/python:v1.50.0-jammy`
+  - Python 3.12 + Chromium + системные зависимости уже в базе
+  - `requirements.txt` копируется отдельно для кэша слоёв
+  - HEALTHCHECK на `/` каждые 30 сек
+  - `CMD uvicorn tools.web_app:app --host 0.0.0.0 --port ${PORT:-8000}`
+- [x] **Procfile** для Dokku buildpack-режима (fallback, если убрать Dockerfile)
+- [x] **app.json** — Dokku/Heroku app config (env, healthcheck, buildpack)
+- [x] **.dockerignore** — кэш, тесты, fixtures, `.git`, `.venv` исключены
+- [x] **INSTALL.md** — раздел 13 с инструкциями по деплою (Docker, Dokku, buildpack)
 
 ### Низкий приоритет (v1.1+)
 - [ ] Emex через Piloterr / xmldatafeed (4-й источник)

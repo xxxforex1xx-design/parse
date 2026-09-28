@@ -1,0 +1,54 @@
+# .dockerignore — что НЕ копировать в Docker-образ
+# Экономит ~50-100 MB и ускоряет docker build.
+
+# Git / IDE
+.git/
+.gitignore
+.gitattributes
+.github/
+.vscode/
+.idea/
+*.swp
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Виртуальные окружения
+.venv/
+venv/
+env/
+.python-version
+
+# Тесты и фикстуры (в проде не нужны)
+tests/
+tools/fixtures/
+
+# Кэш и runtime-данные (volume монтируется отдельно)
+tools/cache/*
+!tools/cache/.gitkeep
+*.jsonl
+*.log
+logs/
+results.jsonl
+skus.txt
+
+# Документация (копируется явно в Dockerfile, остальное не нужно)
+*.md
+!README.md
+!INSTALL.md
+!PROJECT_STATE.md
+
+# Прочий мусор
+.scratch/
+.DS_Store
+Thumbs.db
+node_modules/
